@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    {% block head %}
+
+    {% endblock %}
+</head>
+<body>
+{% block body %}
+    <div class="container mt-5">
+        <h1 class="mb-4">Index</h1>
+        <p>Create offre emploi</p>
+        {% if offres %}
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th>Employment Type</th>
+                        <th>Referent</th>
+                        <th>End Service</th>
+                        <th>Origin</th>
+                        <th>Date Publication</th>
+                        <th>Skills</th>
+                        <th>Start Service</th>
+                        <th>Date Fin</th>
+                        <th>Job Title</th>
+                        <th>Job Description</th>
+                        <th>ID</th>
+                        <th>Company Name</th>
+                        <th>Industries</th>
+                        <th>Location</th>
+                        <th>Internal Reference</th>
+                        <th>Seniority</th>
+                        <th>Experience</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for offre in offres %}
+                        <tr>
+                            <td>{{ offre.employment_type }}</td>
+                            <td>{{ offre.referent }}</td>
+                            <td>{{ offre.end_service }}</td>
+                            <td>{{ offre.origin }}</td>
+                            <td>{{ offre.date_publication }}</td>
+                            <td>{{ offre.skills }}</td>
+                            <td>{{ offre.start_service }}</td>
+                            <td>{{ offre.date_fin }}</td>
+                            <td>{{ offre.job_title }}</td>
+                            <td>{{ offre.job_description }}</td>
+                            <td>{{ offre.id }}</td>
+                            <td>{{ offre.company_name }}</td>
+                            <td>{{ offre.industries }}</td>
+                            <td>{{ offre.location }}</td>
+                            <td>{{ offre.internal_reference }}</td>
+                            <td>{{ offre.seniority }}</td>
+                            <td>{{ offre.experience }}</td>
+                            <td>{{ offre.status }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p>No offers available.</p>
+        {% endif %}
+        {% if not index_exists %}
+            <form action="/create-index" method="post" class="mt-4">
+                <input type="submit" value="Create index offre emploi" class="btn btn-primary">
+            </form>
+        {% endif %}
+        <a href="/add-offre" class="btn btn-secondary">Add Offre d'Emploi</a>
+<a href="/delete-index" class="btn btn-danger">Delete Index</a>
+
+    </div>
+{% endblock %}
+</body>
+</html>

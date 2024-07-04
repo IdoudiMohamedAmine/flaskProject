@@ -1,0 +1,10 @@
+GET http://localhost:9200/delete-index
+User-Agent: IntelliJ HTTP Client/PyCharm 2024.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+content-length: 0
+
+<> 2024-07-04T120041.404.json
+
+###
+
