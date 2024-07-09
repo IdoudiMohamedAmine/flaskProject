@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offer Display</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+
+            const offers = document.querySelectorAll('.offer');
+            const today = new Date();
+
+            offers.forEach(offer => {
+                const publicationDate = new Date(offer.getAttribute('data-publication-date'));
+                const endDate = new Date(offer.getAttribute('data-end-date'));
+
+                // Show offers only if the publication date is before today and the end date is after today
+                if (publicationDate <= today && endDate >= today) {
+                    offer.style.display = ''; // Show valid offers
+                } else {
+                    offer.style.display = 'none'; // Hide invalid offers
+                }
+            });
+        });
+
+        function showPopup() {
+                document.getElementById('popupContainer').style.display = 'flex';
+            }
+
+            function hidePopup() {
+                document.getElementById('popupContainer').style.display = 'none';
+            }
+        function showOfferDetails(offerElement) {
+            const details = offerElement.querySelector('.offer-details').cloneNode(true);
+            details.style.display = 'block'; // Ensure the details are visible
+
+            const offerDetailsContainer = document.getElementById('offerDetails');
+            offerDetailsContainer.innerHTML = ''; // Clear previous details
+            offerDetailsContainer.appendChild(details); // Add new details
+
+            // Remove IDs to avoid duplicate IDs in the document
+            details.querySelectorAll('[id]').forEach(element => element.removeAttribute('id'));
+
+            // Show the popup first to ensure the offerIdField is in the DOM
+            showPopup();
+
+            // Retrieve the offer ID from the clicked offer
+            const offerId = offerElement.querySelector('.offer-details #id').textContent;
+
+            // Now that the popup is shown and offerIdField should be present, set its value
+            const offerIdField = document.getElementById('offerIdField');
+            if (offerIdField) {
+                offerIdField.value = offerId;
+            } else {
+                console.error('offerIdField element not found');
+            }
+        }
+
+        function filter() {
+            event.preventDefault(); // Prevent the form from submitting
+
+            const locationFilter = document.getElementById('locationFilter').value;
+            const companyFilter = document.getElementById('companyFilter').value;
+            const dateFilter = document.getElementById('dateFilter').value;
+
+            const offers = document.querySelectorAll('.offer');
+            const today = new Date();
+
+            offers.forEach(offer => {
+                const offerLocation = offer.querySelector('.offer-details #location').textContent;
+                const offerCompany = offer.querySelector('.offer-details #companyName').textContent;
+                const publicationDate = new Date(offer.getAttribute('data-publication-date'));
+                const endDate = new Date(offer.getAttribute('data-end-date'));
+
+                let showOffer = true;
+
+                if (locationFilter && offerLocation !== locationFilter) {
+                    showOffer = false;
+                }
+
+                if (companyFilter && offerCompany !== companyFilter) {
+                    showOffer = false;
+                }
+
+                if (dateFilter === 'last_week' && (today - publicationDate) / (1000 * 60 * 60 * 24) > 7) {
+                    showOffer = false;
+                } else if (dateFilter === 'last_2_weeks' && (today - publicationDate) / (1000 * 60 * 60 * 24) > 14) {
+                    showOffer = false;
+                } else if (dateFilter === 'last_month' && (today - publicationDate) / (1000 * 60 * 60 * 24) > 30) {
+                    showOffer = false;
+                }
+
+                // Show or hide the offer based on the filter results and valid date range
+                if (showOffer && publicationDate <= today && endDate >= today) {
+                    offer.style.display = '';
+                } else {
+                    offer.style.display = 'none';
+                }
+            });
+        }
+    </script>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container form > div {
+            display: inline-block; /* Makes each div inline */
+            margin-right: 10px; /* Adds some space between the elements */
+        }
+
+        .container label, .container select {
+            display: block; /* Ensures the label and select are on separate lines within their div */
+            margin-bottom: 5px; /* Adds some space below each label */
+        }
+
+        .container button {
+            vertical-align: top; /* Aligns the button with the top of the form elements */
+        }
+
+        #offersList, #offerDetails {
+            width: 50%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        #offersList {
+            overflow-y: auto;
+            height: 500px;
+        }
+
+        #offersList div {
+            cursor: pointer;
+            padding: 5px;
+            margin-bottom: 5px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            border: 2px solid #000;
+        }
+
+        #offers {
+            display: flex;
+            justify-content: space-between; /* This will space out the child elements evenly */
+            width: 100%; /* Ensure the container spans the full width */
+        }
+
+        #offerDetails {
+            width: 50%; /* Adjusted to match #offersList */
+            border: 2px solid #000;
+            background-color: lightgrey;
+            border-radius: 10px;
+            margin-top: 10px; /* Added space between offers list and details */
+        }
+
+        form {
+            width: 100%; /* Adjust as needed */
+            margin-bottom: 20px; /* Space between form and offers list */
+        }
+
+        /* Popup Container Styles */
+        #popupContainer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000; /* Ensure it's above other content */
+        }
+
+        #popupContent {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <form id="filterForm" method="POST" action="/offer">
+        <div>
+            <select id="locationFilter" name="locationFilter">
+                <option value="">Select Location</option>
+                {% for offer in offres %}
+                    <option value="{{ offer.location }}">{{ offer.location }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <select id="companyFilter" name="companyFilter">
+                <option value="">Select Company</option>
+                {% for offer in offres %}
+                    <option value="{{ offer.company_name }}">{{ offer.company_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <select id="dateFilter" name="dateFilter">
+                <option value="">Select Date</option>
+                <option value="last_week">Last Week</option>
+                <option value="last_2_weeks">Last 2 Weeks</option>
+                <option value="last_month">Last Month</option>
+            </select>
+        </div>
+        <button onclick="filter()">Apply Filters</button>
+    </form>
+</div>
+<div id="offers">
+    <div id="offersList">
+        {% for offer in offres %}
+            <div class="offer" onclick="showOfferDetails(this)" data-publication-date="{{ offer.date_publication }}"
+                 data-end-date="{{ offer.date_fin }}">
+                <h3>{{ offer.job_title }}</h3>
+                <p>Company: {{ offer.company_name }}</p>
+                <p>Location: {{ offer.location }}</p>
+                <p>Published: {{ offer.date_publication }}</p>
+                <!-- Hidden container for offer details -->
+                <div class="offer-details" style="display: none;">
+                    <p id="id" hidden="true">{{ offer.id }}</p>
+                    <h2>{{ offer.job_title }}</h2>
+                    <p><strong>Company:</strong> {{ offer.company_name }} </p>
+                    <p><strong>Employment Type:</strong> {{ offer.employment_type }} </p>
+                    <p><strong>Description:</strong> {{ offer.description }} </p>
+                    <p><strong>Start Service:</strong> {{ offer.start_service }} </p>
+                    <p><strong>Location:</strong> {{ offer.location }} </p>
+                    <p><strong>Referent:</strong> {{ offer.referent }} </p>
+                    <p><strong>Skills:</strong> {{ offer.skills }}</p>
+                    <p><strong>Industries:</strong> {{ offer.industries }} </p>
+                    <p><strong>Seniority:</strong> {{ offer.seniority }} </p>
+                    <p><strong>Experience:</strong> {{ offer.experience }} </p>
+                    <p><strong>Published:</strong> {{ offer.date_publication }}</p>
+                    <button type="submit" onclick="showPopup()" class="btn btn-primary">Apply</button>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <div id="offerDetails">
+        <!-- Offer details will be displayed here -->
+
+        <!-- Form for applying to a job -->
+        <div id="popupContainer" style="display:none;">
+            <div id="popupContent">
+                <!-- Popup Form -->
+                <form id="jobApplicationForm" action="/apply-for-job/<offer_id>" method="post"
+                      enctype="multipart/form-data">
+                    <input type="hidden" name="offer_id" id="offerIdField">
+                    <label for="first_name">First Name:</label>
+                    <input type="text" name="first_name" required>
+                    <label for="last_name">Last Name:</label>
+                    <input type="text" name="last_name" required>
+                    <label for="email">Email:</label>
+                    <input type="email" name="email" required>
+                    <label for="file">Resume:</label>
+                    <input type="file" name="file" required>
+                    <button type="submit" onclick="verif()">Apply</button>
+                </form>
+                <button type="button" onclick="hidePopup()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

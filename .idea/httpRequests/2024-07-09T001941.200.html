@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+
+</head>
+<body>
+
+<div class="container mt-5">
+    <h1 class="mb-4">Index</h1>
+    <p>Create offre emploi</p>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="thead-dark">
+            <tr>
+                <th>Employment Type</th>
+                <th>Referent</th>
+                <th>End Service</th>
+                <th>Origin</th>
+                <th>Date Publication</th>
+                <th>Skills</th>
+                <th>Start Service</th>
+                <th>Date Fin</th>
+                <th>Job Title</th>
+                <th>Job Description</th>
+                <th>ID</th>
+                <th>Company Name</th>
+                <th>Industries</th>
+                <th>Location</th>
+                <th>Internal Reference</th>
+                <th>Seniority</th>
+                <th>Experience</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            <tr>
+                <td>IT</td>
+                <td>Sami</td>
+                <td>2024-07-31</td>
+                <td>MIT</td>
+                <td>2024-07-08</td>
+                <td>springBoot,Angular</td>
+                <td>2024-07-21</td>
+                <td>2024-07-14</td>
+                <td>junior software dev</td>
+                <td>you would be a taking care of the back end side of the project that would be assigned to you</td>
+                <td>1abcd2</td>
+                <td>valve.inc</td>
+                <td>IT</td>
+                <td>paris</td>
+                <td>jygghjk</td>
+                <td>2</td>
+                <td>2</td>
+                <td>open</td>
+            </tr>
+
+            <tr>
+                <td>IOT</td>
+                <td>hatem</td>
+                <td>2024-08-11</td>
+                <td>ISET</td>
+                <td>2024-07-14</td>
+                <td>c,c++,Arduino, Assembly</td>
+                <td>2024-07-30</td>
+                <td>2024-07-20</td>
+                <td>hardware coder</td>
+                <td>you write code for hardware :)</td>
+                <td>azertyuiop</td>
+                <td>IOTinc</td>
+                <td>iot</td>
+                <td>Nice</td>
+                <td>qsdfghjkl</td>
+                <td>1</td>
+                <td>1</td>
+                <td>open</td>
+            </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+
+    <form action="/create_postuler" method="post" class="mt-4">
+        <input type="submit" value="Create index postuler" class="btn btn-primary">
+    </form>
+    <a href="/add-offre" class="btn btn-secondary">Add Offre d'Emploi</a>
+    <a href="/delete-index" class="btn btn-danger">Delete Index</a>
+
+</div>
+
+</body>
+</html>
