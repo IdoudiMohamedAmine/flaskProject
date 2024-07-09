@@ -6,6 +6,29 @@
     <title>Offer Display</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script>
+        function verif() {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const resume = document.getElementById('resume');
+            const file = resume.files[0];
+            const fileName = file ? file.name : '';
+            const fileExtension = fileName.slice(((fileName.lastIndexOf('.') - 1) >>> 0) + 2).toLowerCase();
+            const allowedExtensions = ['pdf', 'doc', 'docx'];
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert('Please enter a valid email address');
+                return;
+            }
+            if (!allowedExtensions.includes(fileExtension)) {
+                alert('Please upload a PDF, DOC, or DOCX file');
+                console.log("skibidi");
+                return;
+            }
+            document.querySelector('.form-container').submit();
+            document.querySelector('.form-container').reset();
+            document.getElementById('popupOverlay').style.display = 'none';
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
 
 
@@ -26,36 +49,38 @@
         });
 
         function showPopup() {
-                document.getElementById('popupContainer').style.display = 'flex';
-            }
+            const overlay = document.getElementById('popupOverlay');
+            overlay.classList.toggle('show');
+            overlay.style.display = overlay.classList.contains('show') ? 'flex' : 'none';
+        }
 
-            function hidePopup() {
-                document.getElementById('popupContainer').style.display = 'none';
-            }
+        function attachCancelEvent() {
+            const cancelButton = document.querySelector('button[type="reset"].btn-secondary');
+
+            cancelButton.addEventListener('click', function () {
+                const overlay = document.getElementById('popupOverlay');
+                overlay.classList.toggle('show', false);
+                overlay.style.display = 'none';
+
+                const form = overlay.querySelector('form');
+                form.reset();
+            });
+        }
+
         function showOfferDetails(offerElement) {
             const details = offerElement.querySelector('.offer-details').cloneNode(true);
             details.style.display = 'block'; // Ensure the details are visible
 
             const offerDetailsContainer = document.getElementById('offerDetails');
+            document.getElementById('offer_id').value = details.querySelector('#id').textContent;
+            console.log(details.querySelector('#id').textContent);
+            console.log(document.getElementById('offer_id').value);
+
             offerDetailsContainer.innerHTML = ''; // Clear previous details
             offerDetailsContainer.appendChild(details); // Add new details
 
             // Remove IDs to avoid duplicate IDs in the document
             details.querySelectorAll('[id]').forEach(element => element.removeAttribute('id'));
-
-            // Show the popup first to ensure the offerIdField is in the DOM
-            showPopup();
-
-            // Retrieve the offer ID from the clicked offer
-            const offerId = offerElement.querySelector('.offer-details #id').textContent;
-
-            // Now that the popup is shown and offerIdField should be present, set its value
-            const offerIdField = document.getElementById('offerIdField');
-            if (offerIdField) {
-                offerIdField.value = offerId;
-            } else {
-                console.error('offerIdField element not found');
-            }
         }
 
         function filter() {
@@ -102,6 +127,14 @@
         }
     </script>
     <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+
         .container {
             display: flex;
             flex-direction: column;
@@ -161,25 +194,33 @@
             margin-bottom: 20px; /* Space between form and offers list */
         }
 
-        /* Popup Container Styles */
-        #popupContainer {
-            position: fixed;
+        .overlay-container {
+            display: none; /* Initially hidden */
+            position: fixed; /* Overlay is positioned relative to the viewport */
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000; /* Ensure it's above other content */
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+            z-index: 1000; /* Ensures overlay is on top of other content */
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
         }
 
-        #popupContent {
-            background: white;
-            padding: 20px;
-            border-radius: 5px;
+        .popup-box {
+            background-color: #fff; /* White background for the popup */
+            padding: 20px; /* Padding around the content */
+            border-radius: 5px; /* Rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Slight shadow for depth */
+            width: 50%; /* Width of the popup */
+            max-width: 500px; /* Maximum width */
         }
+
+        /* When .show class is added to .overlay-container */
+        .overlay-container.show {
+            display: flex; /* Make the overlay visible */
+        }
+
     </style>
 </head>
 <body>
@@ -243,26 +284,24 @@
     </div>
     <div id="offerDetails">
         <!-- Offer details will be displayed here -->
-
-        <!-- Form for applying to a job -->
-        <div id="popupContainer" style="display:none;">
-            <div id="popupContent">
-                <!-- Popup Form -->
-                <form id="jobApplicationForm" action="/apply-for-job/<offer_id>" method="post"
-                      enctype="multipart/form-data">
-                    <input type="hidden" name="offer_id" id="offerIdField">
-                    <label for="first_name">First Name:</label>
-                    <input type="text" name="first_name" required>
-                    <label for="last_name">Last Name:</label>
-                    <input type="text" name="last_name" required>
-                    <label for="email">Email:</label>
-                    <input type="email" name="email" required>
-                    <label for="file">Resume:</label>
-                    <input type="file" name="file" required>
-                    <button type="submit" onclick="verif()">Apply</button>
-                </form>
-                <button type="button" onclick="hidePopup()">Close</button>
-            </div>
+    </div>
+    <!-- Form for applying to a job -->
+    <div id="popupOverlay" class="overlay-container">
+        <div class="popup-box">
+            <h2>Application Form</h2>
+            <form class="form-container"enctype="multipart/form-data" action="/apply-for-job" method="POST">
+                <input type="text" hidden id="offer_id" name="offer_id" value="">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" id="email" name="email" class="form-control" required>
+                <label for="first_name" class="form-label">first Name</label>
+                <input type="text" id="first_name" name="first_name" class="form-control" required>
+                <label for="last_name" class="form-label">last Name</label>
+                <input type="text" id="last_name" name="last_name" class="form-control" required>
+                <label for="resume" class="form-label">Resume</label>
+                <input type="file" id="resume" name="resume" class="form-control" required><br>
+                <button type="submit" onclick="verif()" class="btn btn-primary">Send Application</button>
+                <button type="reset" onclick="attachCancelEvent()" class="btn btn-secondary">Cancel</button>
+            </form>
         </div>
     </div>
 </div>

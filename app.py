@@ -1,10 +1,23 @@
-import base64
 from flask import Flask, render_template, request, jsonify, redirect, current_app
 from elasticsearch import Elasticsearch, exceptions
-
+from werkzeug.utils import secure_filename
+import os
+import base64
 
 app = Flask(__name__)
 db = Elasticsearch('http://localhost:9200')
+UPLOAD_FOLDER = 'uploads/'
+ALLOWED_EXTENSIONS = {'pdf', 'doc', 'docx'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# *************** Ensure the upload folder exists  ***************
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
+
+# *************** Ensure the upload folder exists  ***************
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 # *************** define the site routes ***********************
@@ -75,11 +88,13 @@ def create_index_offres_emploi():
     try:
         if not db.indices.exists(index=index_name):
             db.indices.create(index=index_name, body=mappings)
-            return redirect('/')
+            return jsonify({"message": f"Index {index_name} created successfully."}), 200
         else:
             return jsonify({"message": f"Index {index_name} already exists."}), 200
-    except exceptions.ElasticsearchException as e:
-        return jsonify({"error": f"Error creating index {index_name}: {e}"}), 500
+    except exceptions.RequestError as e:
+        return jsonify({"error": f"Error creating index {index_name}: {e.info}"}), 500
+
+
 @app.route('/create_postuler', methods=['POST'])
 def create_postuler():
     # Ensure Elasticsearch index exists for 'postuler'
@@ -92,6 +107,7 @@ def create_postuler():
         "mappings": {
             "properties": {
                 "offer_id": {"type": "text"},
+                "email": {"type": "text"},
                 "first_name": {"type": "text"},
                 "last_name": {"type": "text"},
                 "file": {"type": "text"}  # Change to text to store base64 string
@@ -106,6 +122,8 @@ def create_postuler():
             return jsonify({"message": f"Index {index_name} already exists."}), 200
     except exceptions.ElasticsearchException as e:
         return jsonify({"error": f"Error creating index {index_name}: {e}"}), 500
+
+
 # ***************define the crud routes ***********************
 
 @app.route('/submit-offre', methods=['POST'])
@@ -172,39 +190,29 @@ def offer_details(offer_id):
         return jsonify({"error": str(e)}), 500
 
 
-@app.route('/apply-for-job/<offer_id>', methods=['POST'])
-def apply_for_job(offer_id):
-    # Ensure Elasticsearch index exists for 'postuler'
-    index_name = "postuler"
-    mappings = {
-        "settings": {
-            "number_of_shards": 1,
-            "number_of_replicas": 0
-        },
-        "mappings": {
-            "properties": {
-                "offer_id": {"type": "text"},
-                "first_name": {"type": "text"},
-                "last_name": {"type": "text"},
-                "file": {"type": "text"}  # Change to text to store base64 string
-            }
-        }
-    }
-    if not db.indices.exists(index=index_name):
-        db.indices.create(index=index_name, body=mappings)
-
+@app.route('/apply-for-job', methods=['POST'])
+def apply_for_job():
     # Extracting data from the form
+    offer_id = request.form.get('offer_id')
     first_name = request.form.get('first_name')
     last_name = request.form.get('last_name')
-    if 'file' in request.files:
-        file_content = request.files['file'].read()
-        file_base64 = base64.b64encode(file_content).decode('utf-8')  # Encode file content to base64
-    else:
-        file_base64 = None
+    email = request.form.get('email')
+    file = request.files['resume']
+    if file.filename == '':
+        return jsonify({"error": "No selected file"}), 400
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(filepath)
 
+        with open(filepath, "rb") as f:
+            file_base64 = base64.b64encode(f.read()).decode('utf-8')
+    else:
+        return jsonify({"error": "Invalid file extension"}), 400
     # Constructing document to be indexed
     document = {
         "offer_id": offer_id,
+        "email": email,
         "first_name": first_name,
         "last_name": last_name,
         "file": file_base64
@@ -212,7 +220,7 @@ def apply_for_job(offer_id):
 
     # Indexing the document
     try:
-        db.index(index=index_name, document=document)
+        db.index(index="postuler", document=document)
         return jsonify({"message": "Application submitted successfully"}), 200
     except exceptions.ElasticsearchException as e:
         return jsonify({"error": str(e)}), 500
