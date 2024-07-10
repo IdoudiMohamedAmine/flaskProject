@@ -7,6 +7,7 @@
     <list default="true" id="211c28f5-c229-4a03-8c6b-981934d92be3" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/offer_client_side.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/offer_client_side.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -19,6 +20,7 @@
       <list>
         <option value="Flask Main" />
         <option value="HTML File" />
+        <option value="Python Script" />
       </list>
     </option>
   </component>
@@ -126,7 +128,8 @@
       <workItem from="1720342414034" duration="18547000" />
       <workItem from="1720426808721" duration="25335000" />
       <workItem from="1720514160605" duration="17810000" />
-      <workItem from="1720542693496" duration="360000" />
+      <workItem from="1720542693496" duration="870000" />
+      <workItem from="1720601925350" duration="25851000" />
     </task>
     <servers />
   </component>

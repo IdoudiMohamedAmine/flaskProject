@@ -5,18 +5,20 @@
     <title>Title</title>
     <!-- Include Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
     {% block head %}
 
     {% endblock %}
 </head>
 <body>
 {% block body %}
+    {{ n }}
     <div class="container mt-5">
         <h1 class="mb-4">Index</h1>
         <p>Create offre emploi</p>
         {% if offres %}
             <div class="table-responsive">
-                <table class="table table-bordered table-hover">
+                <table class="table table-success table-striped">
                     <thead class="thead-dark">
                     <tr>
                         <th>Employment Type</th>

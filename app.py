@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request, jsonify, redirect, current_app
+from flask import Flask, render_template, request, jsonify, redirect, current_app, Response
 from elasticsearch import Elasticsearch, exceptions
 from werkzeug.utils import secure_filename
+from datetime import datetime
 import os
 import base64
 
@@ -26,13 +27,14 @@ def index():
     try:
         index_exists = db.indices.exists(index="offres_emploi")
         if (index_exists == True):
-            response = db.search(index="offres_emploi", body={"query": {"match_all": {}}})
+            response = db.search(index="offres_emploi", body={"query": {"match_all": {}}}, size=100)
             offres = [hit['_source'] for hit in response['hits']['hits']]
         else:
             offres = []
     except exceptions.ElasticsearchException as e:
         offres = []
-    return render_template('index.html', offres=offres, index_exists=index_exists)
+    n = len(offres)
+    return render_template('index.html', offres=offres, n=n, index_exists=index_exists)
 
 
 @app.route('/add-offre')
@@ -43,12 +45,61 @@ def add_offre():
 @app.route('/offer', methods=['GET', 'POST'])
 def offer():
     try:
-        response = db.search(index="offres_emploi", body={"query": {"match_all": {}}})
+        page = request.args.get('page', 1, type=int)
+        per_page = 10
+        start = (page - 1) * per_page
+
+        # Adjusted to retrieve data from form data in POST request
+        location_filter = request.form.get('locationFilter')
+        company_filter = request.form.get('companyFilter')
+        employment_type_filter = request.form.get('employmentTypeFilter')
+        date_filter = request.form.get('dateFilter')
+
+        print(f"Filters - Location: {location_filter}, Company: {company_filter}, Employment Type: {employment_type_filter}, Date: {date_filter}")
+
+        # Construct a dynamic query based on filters
+        query_filters = [{"range": {"date_publication": {"lte": "now"}}},  # Publication date is today or before
+                         {"range": {"date_fin": {"gte": "now"}}}]  # End date is today or after
+
+        if location_filter:
+            query_filters.append({"match": {"location": location_filter}})
+        if company_filter:
+            query_filters.append({"match": {"company_name": company_filter}})
+        if employment_type_filter:
+            query_filters.append({"match": {"employment_type": employment_type_filter}})
+
+        # Date filter logic
+        if date_filter == "last_week":
+            query_filters.append({"range": {"date_publication": {"gte": "now-1w/d"}}})
+        elif date_filter == "last_2_weeks":
+            query_filters.append({"range": {"date_publication": {"gte": "now-2w/d"}}})
+        elif date_filter == "last_month":
+            query_filters.append({"range": {"date_publication": {"gte": "now-1M/d"}}})
+
+        # Construct the final query
+        final_query = {"bool": {"must": query_filters}}
+
+        # Fetch offers from Elasticsearch using the constructed query
+        response = db.search(
+            index="offres_emploi",
+            body={
+                "from": start,
+                "size": per_page,
+                "query": final_query
+            }
+        )
+
         offres = [hit['_source'] for hit in response['hits']['hits']]
+        total_offers_response = db.count(index="offres_emploi", body={"query": final_query})
+        total_offers = total_offers_response['count']
+        total_pages = (total_offers + per_page - 1) // per_page
+
     except exceptions.ElasticsearchException as e:
         offres = []
-    return render_template('offer_client_side.html', offres=offres)
+        total_pages = 0
+        page = 1
 
+    return render_template('offer_client_side.html', total_pages=total_pages, page=page, offres=offres)
 
 # *************** define the API routes ***********************
 @app.route('/create-index', methods=['POST'])
@@ -193,14 +244,16 @@ def offer_details(offer_id):
 @app.route('/apply-for-job', methods=['POST'])
 def apply_for_job():
     # Extracting data from the form
+    t = True
     offer_id = request.form.get('offer_id')
     first_name = request.form.get('first_name')
     last_name = request.form.get('last_name')
     email = request.form.get('email')
     file = request.files['resume']
     if file.filename == '':
-        return jsonify({"error": "No selected file"}), 400
-    if file and allowed_file(file.filename):
+        return jsonify({"error": "No file selected"}), 400
+        t = False
+    if file and allowed_file(file.filename.lower()):
         filename = secure_filename(file.filename)
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(filepath)
@@ -208,7 +261,8 @@ def apply_for_job():
         with open(filepath, "rb") as f:
             file_base64 = base64.b64encode(f.read()).decode('utf-8')
     else:
-        return jsonify({"error": "Invalid file extension"}), 400
+        return jsonify({"error": "Invalid file format. Please upload a PDF or DOC/DOCX file"}), 400
+        t = False
     # Constructing document to be indexed
     document = {
         "offer_id": offer_id,
@@ -217,13 +271,13 @@ def apply_for_job():
         "last_name": last_name,
         "file": file_base64
     }
-
-    # Indexing the document
-    try:
-        db.index(index="postuler", document=document)
-        return jsonify({"message": "Application submitted successfully"}), 200
-    except exceptions.ElasticsearchException as e:
-        return jsonify({"error": str(e)}), 500
+    if (t == True):
+        # Indexing the document
+        try:
+            db.index(index="postuler", document=document)
+            return Response('1', status=200)
+        except exceptions.ElasticsearchException as e:
+            return Response('0', status=500)
 
 
 if __name__ == '__main__':

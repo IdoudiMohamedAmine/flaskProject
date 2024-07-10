@@ -5,7 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Offer Display</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        function applicationSuccess() {
+            const form = document.getElementById('applicationForm');
+            const formData = new FormData(form);
+
+            fetch('/apply-for-job', {
+                method: 'POST',
+                body: formData,
+            })
+                .then(response => response.text())
+                .then(data => {
+                    if (data === '1') {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: 'Your application has been submitted successfully.',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'An error occurred while submitting your application.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                }).catch(error => console.error('Error:', error));
+
+            form.reset();
+            document.getElementById('popupOverlay').style.display = 'none';
+        }
+
         function verif() {
             event.preventDefault();
             const email = document.getElementById('email').value;
@@ -16,17 +48,17 @@
             const allowedExtensions = ['pdf', 'doc', 'docx'];
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
-                alert('Please enter a valid email address');
                 return;
             }
             if (!allowedExtensions.includes(fileExtension)) {
-                alert('Please upload a PDF, DOC, or DOCX file');
-                console.log("skibidi");
+
                 return;
             }
-            document.querySelector('.form-container').submit();
-            document.querySelector('.form-container').reset();
+
+
             document.getElementById('popupOverlay').style.display = 'none';
+            applicationSuccess();
+            document.querySelector('.form-container').reset();
         }
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -82,55 +114,12 @@
             // Remove IDs to avoid duplicate IDs in the document
             details.querySelectorAll('[id]').forEach(element => element.removeAttribute('id'));
         }
-
-        function filter() {
-            event.preventDefault(); // Prevent the form from submitting
-
-            const locationFilter = document.getElementById('locationFilter').value;
-            const companyFilter = document.getElementById('companyFilter').value;
-            const dateFilter = document.getElementById('dateFilter').value;
-
-            const offers = document.querySelectorAll('.offer');
-            const today = new Date();
-
-            offers.forEach(offer => {
-                const offerLocation = offer.querySelector('.offer-details #location').textContent;
-                const offerCompany = offer.querySelector('.offer-details #companyName').textContent;
-                const publicationDate = new Date(offer.getAttribute('data-publication-date'));
-                const endDate = new Date(offer.getAttribute('data-end-date'));
-
-                let showOffer = true;
-
-                if (locationFilter && offerLocation !== locationFilter) {
-                    showOffer = false;
-                }
-
-                if (companyFilter && offerCompany !== companyFilter) {
-                    showOffer = false;
-                }
-
-                if (dateFilter === 'last_week' && (today - publicationDate) / (1000 * 60 * 60 * 24) > 7) {
-                    showOffer = false;
-                } else if (dateFilter === 'last_2_weeks' && (today - publicationDate) / (1000 * 60 * 60 * 24) > 14) {
-                    showOffer = false;
-                } else if (dateFilter === 'last_month' && (today - publicationDate) / (1000 * 60 * 60 * 24) > 30) {
-                    showOffer = false;
-                }
-
-                // Show or hide the offer based on the filter results and valid date range
-                if (showOffer && publicationDate <= today && endDate >= today) {
-                    offer.style.display = '';
-                } else {
-                    offer.style.display = 'none';
-                }
-            });
-        }
     </script>
     <style>
         body {
             margin: 0;
             padding: 0;
-            height: 100vh;
+
             background-color: #f0f0f0;
             font-family: Arial, sans-serif;
         }
@@ -139,6 +128,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: space-between;
         }
 
         .container form > div {
@@ -162,8 +152,10 @@
         }
 
         #offersList {
+            flex: 1;
             overflow-y: auto;
-            height: 500px;
+            margin-bottom: 20px;
+            width: 100%;
         }
 
         #offersList div {
@@ -173,16 +165,27 @@
             background-color: #f0f0f0;
             border-radius: 10px;
             border: 2px solid #000;
+
         }
 
         #offers {
             display: flex;
-            justify-content: space-between; /* This will space out the child elements evenly */
+            height: calc(100vh - 150px); /* Adjusted to fit the viewport */
+            margin: 20px;
             width: 100%; /* Ensure the container spans the full width */
         }
 
+        .containerr {
+            display: flex;
+            flex-direction: column;
+            width: 50%;
+            height: calc(100vh - 150px); /* Adjusted to fit the viewport */
+            margin-top: 20px;
+            justify-content: center;
+        }
+
         #offerDetails {
-            width: 50%; /* Adjusted to match #offersList */
+            width: 150%; /* Adjusted to match #offersList */
             border: 2px solid #000;
             background-color: lightgrey;
             border-radius: 10px;
@@ -243,6 +246,13 @@
             </select>
         </div>
         <div>
+            <select id="employmentTypeFilter" name="employmentTypeFilter">
+                <option value="">Select Employment Type</option>
+                <option value="part time">part time</option>
+                <option value="full time">full time</option>
+            </select>
+        </div>
+        <div>
             <select id="dateFilter" name="dateFilter">
                 <option value="">Select Date</option>
                 <option value="last_week">Last Week</option>
@@ -250,37 +260,82 @@
                 <option value="last_month">Last Month</option>
             </select>
         </div>
-        <button onclick="filter()">Apply Filters</button>
+        <button type="submit" >Apply Filters</button>
     </form>
 </div>
 <div id="offers">
-    <div id="offersList">
-        {% for offer in offres %}
-            <div class="offer" onclick="showOfferDetails(this)" data-publication-date="{{ offer.date_publication }}"
-                 data-end-date="{{ offer.date_fin }}">
-                <h3>{{ offer.job_title }}</h3>
-                <p>Company: {{ offer.company_name }}</p>
-                <p>Location: {{ offer.location }}</p>
-                <p>Published: {{ offer.date_publication }}</p>
-                <!-- Hidden container for offer details -->
-                <div class="offer-details" style="display: none;">
-                    <p id="id" hidden="true">{{ offer.id }}</p>
-                    <h2>{{ offer.job_title }}</h2>
-                    <p><strong>Company:</strong> {{ offer.company_name }} </p>
-                    <p><strong>Employment Type:</strong> {{ offer.employment_type }} </p>
-                    <p><strong>Description:</strong> {{ offer.description }} </p>
-                    <p><strong>Start Service:</strong> {{ offer.start_service }} </p>
-                    <p><strong>Location:</strong> {{ offer.location }} </p>
-                    <p><strong>Referent:</strong> {{ offer.referent }} </p>
-                    <p><strong>Skills:</strong> {{ offer.skills }}</p>
-                    <p><strong>Industries:</strong> {{ offer.industries }} </p>
-                    <p><strong>Seniority:</strong> {{ offer.seniority }} </p>
-                    <p><strong>Experience:</strong> {{ offer.experience }} </p>
-                    <p><strong>Published:</strong> {{ offer.date_publication }}</p>
-                    <button type="submit" onclick="showPopup()" class="btn btn-primary">Apply</button>
+    <div class="containerr">
+        <div class="pagination-container">
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <li class="page-item {% if page == 1 %}disabled{% endif %}">
+                        <a class="page-link" href="{{ url_for('offer', page=page-1) }}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    {% for p in range(1, total_pages + 1) %}
+                        <li class="page-item {% if p == page %}active{% endif %}">
+                            <a class="page-link" href="{{ url_for('offer', page=p) }}">{{ p }}</a>
+                        </li>
+                    {% endfor %}
+                    <li class="page-item {% if page == total_pages %}disabled{% endif %}">
+                        <a class="page-link" href="{{ url_for('offer', page=page+1) }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div id="offersList">
+            {% for offer in offres %}
+                <div class="offer" onclick="showOfferDetails(this)" data-publication-date="{{ offer.date_publication }}"
+                     data-end-date="{{ offer.date_fin }}">
+                    <h3>{{ offer.job_title }}</h3>
+                    <p><strong>Employment Type: {{ offer.employment_type }}</strong></p>
+                    <p>Company: {{ offer.company_name }}</p>
+                    <p>Location: {{ offer.location }}</p>
+                    <p>Published: {{ offer.date_publication }}</p>
+                    <!-- Hidden container for offer details -->
+                    <div class="offer-details" style="display: none;">
+                        <p id="id" hidden="true">{{ offer.id }}</p>
+                        <h2>{{ offer.job_title }}</h2>
+                        <p><strong>Company:</strong> {{ offer.company_name }} </p>
+                        <p><strong>Employment Type:</strong> {{ offer.employment_type }} </p>
+                        <p><strong>Description:</strong> {{ offer.description }} </p>
+                        <p><strong>Start Service:</strong> {{ offer.start_service }} </p>
+                        <p><strong>Location:</strong> {{ offer.location }} </p>
+                        <p><strong>Referent:</strong> {{ offer.referent }} </p>
+                        <p><strong>Skills:</strong> {{ offer.skills }}</p>
+                        <p><strong>Industries:</strong> {{ offer.industries }} </p>
+                        <p><strong>Seniority:</strong> {{ offer.seniority }} </p>
+                        <p><strong>Experience:</strong> {{ offer.experience }} </p>
+                        <p><strong>Published:</strong> {{ offer.date_publication }}</p>
+                        <button type="submit" onclick="showPopup()" class="btn btn-primary">Apply</button>
+                    </div>
                 </div>
-            </div>
-        {% endfor %}
+            {% endfor %}
+        </div>
+        <div class="pagination-container">
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <li class="page-item {% if page == 1 %}disabled{% endif %}">
+                        <a class="page-link" href="{{ url_for('offer', page=page-1) }}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    {% for p in range(1, total_pages + 1) %}
+                        <li class="page-item {% if p == page %}active{% endif %}">
+                            <a class="page-link" href="{{ url_for('offer', page=p) }}">{{ p }}</a>
+                        </li>
+                    {% endfor %}
+                    <li class="page-item {% if page == total_pages %}disabled{% endif %}">
+                        <a class="page-link" href="{{ url_for('offer', page=page+1) }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
     </div>
     <div id="offerDetails">
         <!-- Offer details will be displayed here -->
@@ -289,7 +344,8 @@
     <div id="popupOverlay" class="overlay-container">
         <div class="popup-box">
             <h2>Application Form</h2>
-            <form class="form-container"enctype="multipart/form-data" action="/apply-for-job" method="POST">
+            <form class="form-container" id="applicationForm" enctype="multipart/form-data" action="/apply-for-job"
+                  method="POST">
                 <input type="text" hidden id="offer_id" name="offer_id" value="">
                 <label for="email" class="form-label">Email</label>
                 <input type="email" id="email" name="email" class="form-control" required>
