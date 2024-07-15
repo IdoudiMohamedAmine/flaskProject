@@ -55,7 +55,8 @@ def offer():
         employment_type_filter = request.form.get('employmentTypeFilter')
         date_filter = request.form.get('dateFilter')
 
-        print(f"Filters - Location: {location_filter}, Company: {company_filter}, Employment Type: {employment_type_filter}, Date: {date_filter}")
+        print(
+            f"Filters - Location: {location_filter}, Company: {company_filter}, Employment Type: {employment_type_filter}, Date: {date_filter}")
 
         # Construct a dynamic query based on filters
         query_filters = [{"range": {"date_publication": {"lte": "now"}}},  # Publication date is today or before
@@ -88,18 +89,47 @@ def offer():
                 "query": final_query
             }
         )
+        responseforFilters = db.search(index="offres_emploi", body={"query": {"match_all": {}}}, size=100)
+
+        companies = set()
+        locations = set()
+        employment_types = set()
+        for hit in responseforFilters['hits']['hits']:
+            source = hit['_source']
+            location = source.get('location')
+            company = source.get('company_name')
+            employment_type = source.get('employment_type')
+            if location:
+                locations.add(location)
+            if company:
+                companies.add(company)
+            if employment_type:
+                employment_types.add(employment_type)
+
+        list_companies = list(companies)
+        list_locations = list(locations)
+        list_employment_types = list(employment_types)
 
         offres = [hit['_source'] for hit in response['hits']['hits']]
         total_offers_response = db.count(index="offres_emploi", body={"query": final_query})
         total_offers = total_offers_response['count']
         total_pages = (total_offers + per_page - 1) // per_page
 
+
     except exceptions.ElasticsearchException as e:
+        list_companies =[]
+        list_locations = []
+        list_employment_types = []
         offres = []
         total_pages = 0
         page = 1
 
-    return render_template('offer_client_side.html', total_pages=total_pages, page=page, offres=offres)
+    return render_template('offer_client_side.html', total_pages=total_pages, page=page, offres=offres,
+                           list_locations=list_locations, list_companies=list_companies,
+                           list_employment_types=list_employment_types, location_filter=location_filter,
+                           company_filter=company_filter, employment_type_filter=employment_type_filter,
+                           date_filter=date_filter)
+
 
 # *************** define the API routes ***********************
 @app.route('/create-index', methods=['POST'])

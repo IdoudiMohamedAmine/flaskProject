@@ -7,6 +7,10 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            updateOfferDetailsStyle();
+        });
+
         function applicationSuccess() {
             const form = document.getElementById('applicationForm');
             const formData = new FormData(form);
@@ -113,7 +117,33 @@
 
             // Remove IDs to avoid duplicate IDs in the document
             details.querySelectorAll('[id]').forEach(element => element.removeAttribute('id'));
+
         }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const scrollableOfferDetails = document.querySelector('.scrollable-offer-details');
+            const headerContent = document.querySelector('#offerDetails h2');
+            const otherContent = document.querySelectorAll('#offerDetails p, #offerDetails button');
+
+            scrollableOfferDetails.addEventListener('scroll', function () {
+                const shrinkRatio = 0.8; // Adjust as needed
+                const scrollTop = scrollableOfferDetails.scrollTop;
+
+                if (scrollTop > 50) { // Trigger point
+                    headerContent.style.transform = `scale(${shrinkRatio})`;
+                    otherContent.forEach(element => {
+                        element.style.transform = `scale(${shrinkRatio})`;
+                    });
+                } else {
+                    headerContent.style.transform = 'scale(1)';
+                    otherContent.forEach(element => {
+                        element.style.transform = 'scale(1)';
+                    });
+                }
+            });
+        });
+
+
     </script>
     <style>
         body {
@@ -125,10 +155,11 @@
         }
 
         .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
+            display: block;
+            margin-left: 490px;
+            margin-right: auto;
+            width: 100%;
+
         }
 
         .container form > div {
@@ -170,9 +201,9 @@
 
         #offers {
             display: flex;
-            height: calc(100vh - 150px); /* Adjusted to fit the viewport */
-            margin: 20px;
-            width: 100%; /* Ensure the container spans the full width */
+            height: calc(100vh - 150px);
+            margin: 20px auto; /* Center horizontally and keep the vertical margin */
+            width: 80%; /* Adjust the width as needed for centering */
         }
 
         .containerr {
@@ -184,13 +215,6 @@
             justify-content: center;
         }
 
-        #offerDetails {
-            width: 150%; /* Adjusted to match #offersList */
-            border: 2px solid #000;
-            background-color: lightgrey;
-            border-radius: 10px;
-            margin-top: 10px; /* Added space between offers list and details */
-        }
 
         form {
             width: 100%; /* Adjust as needed */
@@ -224,68 +248,145 @@
             display: flex; /* Make the overlay visible */
         }
 
+        .filter {
+            background-color: #d3d3d3; /* Button-like blue background */
+            color: black; /* White text color */
+            padding: 10px 15px; /* Padding to increase the size, similar to a button */
+            border: none; /* Remove the default border */
+            border-radius: 5px; /* Rounded corners */
+            cursor: pointer; /* Change cursor to pointer to indicate it's clickable */
+            outline: none; /* Remove the outline to mimic button style */
+            -webkit-appearance: none; /* Remove default browser styling */
+            -moz-appearance: none; /* Remove default browser styling */
+            appearance: none; /* Remove default browser styling */
+            position: relative; /* Needed for custom arrow positioning */
+        }
+
+        .filter:focus {
+            background-color: #b3b3b3; /* Darker shade for focus state */
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, .25); /* Bootstrap-like focus shadow */
+        }
+
+        .offer-details-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* Aligns items to the start of the container */
+        }
+
+        /* Custom arrow */
+        .filter::-ms-expand {
+            display: none; /* Hide the default arrow in IE */
+        }
+
+        .filter::after {
+            content: '\25BC'; /* Down arrow */
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            color: #000000; /* Arrow color */
+            pointer-events: none; /* Prevent arrow from being clickable */
+        }
+
+        /* Adjust the div that wraps the select to inline-block for alignment */
+        .filterDiv {
+            display: inline-block;
+            margin-right: 10px; /* Space between filters */
+        }
+
+        .btn-primary {
+            padding: 10px 15px; /* Match the padding of .filter */
+            font-size: 16px; /* Match the font size of .filter */
+            border: none; /* Assuming .filter has no border */
+            border-radius: 5px; /* Match the border-radius of .filter */
+            cursor: pointer; /* Ensure it's clear the button is clickable */
+        }
+
+        /* Adjustments for hover state to maintain visual feedback */
+        .btn-primary:hover {
+            background-color: #218838; /* Darker shade for hover effect */
+            border-color: #1e7e34;
+        }
+
+        .container .filterDiv, .container button {
+            margin-top: 20px; /* Adjust the value as needed */
+        }
+
+        .scrollable-content {
+            max-height: 450px; /* Adjust based on your needs */
+            overflow-y: auto;
+        }
+
+        .scrollable-content p {
+            margin: 10px 0; /* Adds vertical spacing between paragraphs */
+            padding: 5px; /* Adds padding inside each paragraph */
+        }
+
+        .scrollable-content hr {
+            margin: 10px 0; /* Adds vertical spacing above and below each <hr> */
+        }
+
+        #offerDetails {
+            width: 100%; /* Shrink the width as needed */
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            margin-top: 10px; /* Adjust if needed */
+            margin-left: auto; /* Center the offer details if it's not nested inside #offers */
+            margin-right: auto;
+        }
+
     </style>
 </head>
 <body>
 <div class="container">
     <form id="filterForm" method="POST" action="/offer">
-        <div>
-            <select id="locationFilter" name="locationFilter">
+        <div class="filterDiv">
+            <select id="locationFilter" class="filter" name="locationFilter">
                 <option value="">Select Location</option>
-                {% for offer in offres %}
-                    <option value="{{ offer.location }}">{{ offer.location }}</option>
+                {% for location in list_locations %}
+                    <option value="{{ location }}" {% if location == location_filter %}selected{% endif %}>
+                        {{ location }}
+                    </option>
                 {% endfor %}
             </select>
         </div>
-        <div>
-            <select id="companyFilter" name="companyFilter">
+        <div class="filterDiv">
+            <select id="companyFilter" class="filter" name="companyFilter">
                 <option value="">Select Company</option>
-                {% for offer in offres %}
-                    <option value="{{ offer.company_name }}">{{ offer.company_name }}</option>
+                {% for company in list_companies %}
+                    <option value="{{ company }}" {% if company == company_filter %}selected{% endif %}>
+                        {{ company }}
+                    </option>
                 {% endfor %}
             </select>
         </div>
-        <div>
-            <select id="employmentTypeFilter" name="employmentTypeFilter">
+        <div class="filterDiv">
+            <select id="employmentTypeFilter" class="filter" name="employmentTypeFilter">
                 <option value="">Select Employment Type</option>
-                <option value="part time">part time</option>
-                <option value="full time">full time</option>
+                {% for emplomentType in list_employment_types %}
+                    <option value="{{ emplomentType }}"
+                            {% if emplomentType == employment_type_filter %}selected{% endif %}>
+                        {{ emplomentType }}
+                    </option>
+                {% endfor %}
             </select>
         </div>
-        <div>
-            <select id="dateFilter" name="dateFilter">
+        <div class="filterDiv">
+            <select id="dateFilter" name="dateFilter" class="filter">
                 <option value="">Select Date</option>
-                <option value="last_week">Last Week</option>
-                <option value="last_2_weeks">Last 2 Weeks</option>
-                <option value="last_month">Last Month</option>
+                <option value="last_week" {% if date_filter == "last_week" %}selected{% endif %}>Last Week</option>
+                <option value="last_2_weeks" {% if date_filter == "last_2_weeks" %}selected{% endif %}>Last 2 Weeks
+                </option>
+                <option value="last_month" {% if date_filter == "last_month" %}selected{% endif %}>Last Month</option>
             </select>
         </div>
-        <button type="submit" >Apply Filters</button>
+        <button type="submit" class="btn btn-primary">Apply Filters</button>
     </form>
 </div>
+<hr>
 <div id="offers">
     <div class="containerr">
-        <div class="pagination-container">
-            <nav aria-label="Page navigation">
-                <ul class="pagination">
-                    <li class="page-item {% if page == 1 %}disabled{% endif %}">
-                        <a class="page-link" href="{{ url_for('offer', page=page-1) }}" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                    </li>
-                    {% for p in range(1, total_pages + 1) %}
-                        <li class="page-item {% if p == page %}active{% endif %}">
-                            <a class="page-link" href="{{ url_for('offer', page=p) }}">{{ p }}</a>
-                        </li>
-                    {% endfor %}
-                    <li class="page-item {% if page == total_pages %}disabled{% endif %}">
-                        <a class="page-link" href="{{ url_for('offer', page=page+1) }}" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
+        <h3>list des offres : </h3>
         <div id="offersList">
             {% for offer in offres %}
                 <div class="offer" onclick="showOfferDetails(this)" data-publication-date="{{ offer.date_publication }}"
@@ -301,16 +402,36 @@
                         <h2>{{ offer.job_title }}</h2>
                         <p><strong>Company:</strong> {{ offer.company_name }} </p>
                         <p><strong>Employment Type:</strong> {{ offer.employment_type }} </p>
-                        <p><strong>Description:</strong> {{ offer.description }} </p>
-                        <p><strong>Start Service:</strong> {{ offer.start_service }} </p>
-                        <p><strong>Location:</strong> {{ offer.location }} </p>
-                        <p><strong>Referent:</strong> {{ offer.referent }} </p>
-                        <p><strong>Skills:</strong> {{ offer.skills }}</p>
-                        <p><strong>Industries:</strong> {{ offer.industries }} </p>
-                        <p><strong>Seniority:</strong> {{ offer.seniority }} </p>
-                        <p><strong>Experience:</strong> {{ offer.experience }} </p>
-                        <p><strong>Published:</strong> {{ offer.date_publication }}</p>
                         <button type="submit" onclick="showPopup()" class="btn btn-primary">Apply</button>
+                        <hr>
+                        <div class="scrollable-content">
+                            <label><strong>Published:</strong> </label>
+                            <p>{{ offer.date_publication }}</p>
+                            <hr>
+                            <label><strong>Description:</strong></label>
+                            <p> {{ offer.job_description }} </p>
+                            <hr>
+                            <label><strong>Start Service:</strong></label>
+                            <p> {{ offer.start_service }} </p>
+                            <hr>
+                            <label><strong>Location:</strong></label>
+                            <p> {{ offer.location }} </p>
+                            <hr>
+                            <label><strong>Referent:</strong> </label>
+                            <p>{{ offer.referent }} </p>
+                            <hr>
+                            <label><strong>Skills:</strong></label>
+                            <p> {{ offer.skills }}</p>
+                            <hr>
+                            <label><strong>Industries:</strong></label>
+                            <p> {{ offer.industries }} </p>
+                            <hr>
+                            <label><strong>Seniority:</strong></label>
+                            <p> {{ offer.seniority }} </p>
+                            <hr>
+                            <label><strong>Experience:</strong></label>
+                            <p> {{ offer.experience }} </p>
+                        </div>
                     </div>
                 </div>
             {% endfor %}
@@ -337,8 +458,12 @@
             </nav>
         </div>
     </div>
-    <div id="offerDetails">
-        <!-- Offer details will be displayed here -->
+
+    <div class="offer-details-container">
+        <h3>offer details : </h3>
+        <div id="offerDetails">
+            <!-- Offer details will be displayed here -->
+        </div>
     </div>
     <!-- Form for applying to a job -->
     <div id="popupOverlay" class="overlay-container">
