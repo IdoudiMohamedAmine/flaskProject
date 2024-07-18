@@ -45,6 +45,12 @@ def add_offre():
 @app.route('/offer', methods=['GET', 'POST'])
 def offer():
     try:
+        # Extract the 'lang' parameter from the query string
+        lang = request.args.get('lang', 'en').lower()
+
+        # Validate the 'lang' parameter
+        if lang not in ['en', 'fr', '']:
+            lang = 'en'
         page = request.args.get('page', 1, type=int)
         per_page = 10
         start = (page - 1) * per_page
@@ -88,7 +94,8 @@ def offer():
             sort_criteria = [{"job_title": {"order": "asc"}}]
 
         # Fetch offers from Elasticsearch using the constructed query
-        response = db.search(index="offres_emploi", body={"from": start, "size": per_page, "query": final_query, "sort": sort_criteria})
+        response = db.search(index="offres_emploi",
+                             body={"from": start, "size": per_page, "query": final_query, "sort": sort_criteria})
         total_offers_response = db.count(index="offres_emploi", body={"query": final_query})
         total_offers = total_offers_response['count']
         responseforFilters = db.search(index="offres_emploi", body={"query": {"match_all": {}}}, size=100)
@@ -128,7 +135,7 @@ def offer():
                            list_locations=list_locations, list_companies=list_companies,
                            list_employment_types=list_employment_types, location_filter=location_filter,
                            company_filter=company_filter, employment_type_filter=employment_type_filter,
-                           date_filter=date_filter, offerNumber=total_offers, sort_by=sort_by)
+                           date_filter=date_filter, offerNumber=total_offers, sort_by=sort_by,lang=lang)
 
 
 # *************** define the API routes ***********************

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ lang }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -396,7 +396,8 @@
     <form id="filterForm" method="POST" action="/offer" style="display: flex; align-items: center;">
         <div class="filterDiv">
             <select id="locationFilter" class="filter" name="locationFilter">
-                <option value="">Select Location</option>
+                <option value="">{% if lang == 'fr' %}Sélectionnez l'emplacement{% else %}Select
+                    Location{% endif %}</option>
                 {% for location in list_locations %}
                     <option value="{{ location }}" {% if location == location_filter %}selected{% endif %}>
                         {{ location }}
@@ -406,7 +407,10 @@
         </div>
         <div class="filterDiv">
             <select id="companyFilter" class="filter" name="companyFilter">
-                <option value="">Select Company</option>
+                <
+                <option value="">{% if lang =='fr' %}Sélectionner une entreprise{% else %} Select
+                    Company {% endif %}</option>
+                >
                 {% for company in list_companies %}
                     <option value="{{ company }}" {% if company == company_filter %}selected{% endif %}>
                         {{ company }}
@@ -416,7 +420,8 @@
         </div>
         <div class="filterDiv">
             <select id="employmentTypeFilter" class="filter" name="employmentTypeFilter">
-                <option value="">Select Employment Type</option>
+                <option value="">{% if lang=='fr' %}Sélectionner le type d'emploi{% else %}Select Employment
+                    Type{% endif %}</option>
                 {% for emplomentType in list_employment_types %}
                     <option value="{{ emplomentType }}"
                             {% if emplomentType == employment_type_filter %}selected{% endif %}>
@@ -427,20 +432,21 @@
         </div>
         <div class="filterDiv">
             <select id="dateFilter" name="dateFilter" class="filter">
-                <option value="">Select Date</option>
+                <option value="">{% if lang=='fr' %}Sélectionner la date{% else %}Select Date{% endif %}</option>
                 <option value="last_week" {% if date_filter == "last_week" %}selected{% endif %}>Last Week</option>
                 <option value="last_2_weeks" {% if date_filter == "last_2_weeks" %}selected{% endif %}>Last 2 Weeks
                 </option>
                 <option value="last_month" {% if date_filter == "last_month" %}selected{% endif %}>Last Month</option>
             </select>
         </div>
-        <button type="submit" class="btn btn-primary">Apply Filters</button>
+        <button type="submit" class="btn btn-primary">{% if lang=='fr' %}Appliquer les filtres{% else %}Apply
+            Filters{% endif %}</button>
     </form>
 </div>
 <hr>
 <div id="offers">
     <div class="containerr">
-        <h3 id="header3">list des offres : </h3>
+        <h3 id="header3">{% if lang=='fr' %}liste des offres :{% else %}list des offres : {% endif %}</h3>
         <table>
             <tr>
                 <td>Ordered by:
@@ -448,7 +454,14 @@
                     <a href="{{ url_for('offer', page=page, sort='title') }}">Alphabetically</a>
                 </td>
                 <td>
-                    {% if offerNumber %}number of offers : {{ offerNumber }}{% endif %}
+                    {% if offerNumber %}
+                        {% if lang=='fr' %}
+                            number of offers :
+                        {% else %}
+                            nombre d'offres :
+                        {% endif %}
+                        {{ offerNumber }}
+                    {% endif %}
                 </td>
             </tr>
         </table>
@@ -459,44 +472,55 @@
                 <div class="offer" onclick="showOfferDetails(this)" data-publication-date="{{ offer.date_publication }}"
                      data-end-date="{{ offer.date_fin }}">
                     <h3>{{ offer.job_title }}</h3>
-                    <p><strong>Employment Type: {{ offer.employment_type }}</strong></p>
-                    <p>Company: {{ offer.company_name }}</p>
-                    <p>Location: {{ offer.location }}</p>
-                    <p>Published: {{ offer.date_publication }}</p>
+                    <p><strong>{% if lang == 'fr' %}Type d'emploi :{% else %}Employment
+                        Type:{% endif %} {{ offer.employment_type }}</strong></p>
+                    <p>{% if lang=='fr' %}l'entreprise{% else %}Company:{% endif %} {{ offer.company_name }}</p>
+                    <p>{% if lang == 'fr' %}Emplacement : {% else %}Location: {% endif %}{{ offer.location }}</p>
+                    <p>{% if lang == 'fr' %}Publié : {% else %}Published: {% endif %}{{ offer.date_publication }}</p>
                     <!-- Hidden container for offer details -->
                     <div class="offer-details" style="display: none;">
                         <p id="id" hidden="true">{{ offer.id }}</p>
                         <h2>{{ offer.job_title }}</h2>
-                        <p><strong>Company:</strong> {{ offer.company_name }} </p>
-                        <p><strong>Employment Type:</strong> {{ offer.employment_type }} </p>
-                        <button type="submit" onclick="showPopup()" class="btn btn-primary">Apply</button>
+                        <p><strong>{% if lang=='fr' %}l'entreprise{% else %}
+                            Company:{% endif %}</strong> {{ offer.company_name }} </p>
+                        <p><strong>{% if lang == 'fr' %}Type d'emploi :{% else %}Employment
+                            Type:{% endif %}</strong> {{ offer.employment_type }} </p>
+                        <button type="submit" onclick="showPopup()" class="btn btn-primary">
+                            {% if lang == 'fr' %}Postuler{% else %}Apply{% endif %}
+                        </button>
                         <hr>
                         <div class="scrollable-content">
-                            <label><strong>Published:</strong> </label>
+                            <label><strong>{% if lang=='fr' %}Publié :{% else %}Published :{% endif %}</strong> </label>
                             <p>{{ offer.date_publication }}</p>
                             <hr>
-                            <label><strong>Description:</strong></label>
+                            <label><strong>{% if lang == 'fr' %}Description :{% else %}Description:{% endif %}</strong></label>
                             <p> {{ offer.job_description }} </p>
                             <hr>
-                            <label><strong>Start Service:</strong></label>
+                            <label><strong>{% if lang == 'fr' %}Date de début :{% else %}Start
+                                Service:{% endif %}</strong></label>
                             <p> {{ offer.start_service }} </p>
                             <hr>
-                            <label><strong>Location:</strong></label>
+                            <label><strong>{% if lang == 'fr' %}Emplacement :{% else %}
+                                Location:{% endif %}</strong></label>
                             <p> {{ offer.location }} </p>
                             <hr>
                             <label><strong>Referent:</strong> </label>
                             <p>{{ offer.referent }} </p>
                             <hr>
-                            <label><strong>Skills:</strong></label>
+                            <label><strong>{% if lang == 'fr' %}Compétences :{% else %}
+                                Skills:{% endif %}</strong></label>
                             <p> {{ offer.skills }}</p>
                             <hr>
-                            <label><strong>Industries:</strong></label>
+                            <label><strong>{% if lang == 'fr' %}Industries :{% else %}
+                                Industries:{% endif %}</strong></label>
                             <p> {{ offer.industries }} </p>
                             <hr>
-                            <label><strong>Seniority:</strong></label>
+                            <label><strong>{% if lang == 'fr' %}Ancienneté :{% else %}
+                                Seniority:{% endif %}</strong></label>
                             <p> {{ offer.seniority }} </p>
                             <hr>
-                            <label><strong>Experience:</strong></label>
+                            <label><strong>{% if lang == 'fr' %}Expérience :{% else %}
+                                Experience:{% endif %}</strong></label>
                             <p> {{ offer.experience }} </p>
                         </div>
                     </div>
@@ -538,16 +562,20 @@
             <form class="form-container" id="applicationForm" enctype="multipart/form-data" action="/apply-for-job"
                   method="POST">
                 <input type="text" hidden id="offer_id" name="offer_id" value="">
-                <label for="email" class="form-label">Email</label>
+                <label for="email" class="form-label">{% if lang == 'fr' %}Email{% else %}Email{% endif %}</label>
                 <input type="email" id="email" name="email" class="form-control" required>
-                <label for="first_name" class="form-label">first Name</label>
+                <label for="first_name" class="form-label">{% if lang == 'fr' %}Prénom{% else %}First
+                    Name{% endif %}</label>
                 <input type="text" id="first_name" name="first_name" class="form-control" required>
-                <label for="last_name" class="form-label">last Name</label>
+                <label for="last_name" class="form-label">{% if lang == 'fr' %}Nom de famille{% else %}Last
+                    Name{% endif %}</label>
                 <input type="text" id="last_name" name="last_name" class="form-control" required>
-                <label for="resume" class="form-label">Resume</label>
+                <label for="resume" class="form-label">{% if lang == 'fr' %}CV{% else %}Resume{% endif %}</label>
                 <input type="file" id="resume" name="resume" class="form-control" required><br>
-                <button type="submit" onclick="verif()" class="btn btn-primary">Send Application</button>
-                <button type="reset" onclick="attachCancelEvent()" class="btn btn-secondary">Cancel</button>
+                <button type="submit" onclick="verif()" class="btn btn-primary">{% if lang == 'fr' %}Envoyer la
+                    candidature{% else %}Send Application{% endif %}</button>
+                <button type="reset" onclick="attachCancelEvent()" class="btn btn-secondary">{% if lang == 'fr' %}
+                    Annuler{% else %}Cancel{% endif %}</button>
             </form>
         </div>
     </div>
