@@ -54,9 +54,10 @@ def offer():
         company_filter = request.form.get('companyFilter')
         employment_type_filter = request.form.get('employmentTypeFilter')
         date_filter = request.form.get('dateFilter')
+        sort_by = request.args.get('sort_by', 'date')  # Default sort by date
 
         print(
-            f"Filters - Location: {location_filter}, Company: {company_filter}, Employment Type: {employment_type_filter}, Date: {date_filter}")
+            f"Filters - Location: {location_filter}, Company: {company_filter}, Employment Type: {employment_type_filter}, Date: {date_filter}, Sort By: {sort_by}")
 
         # Construct a dynamic query based on filters
         query_filters = [{"range": {"date_publication": {"lte": "now"}}},  # Publication date is today or before
@@ -80,15 +81,16 @@ def offer():
         # Construct the final query
         final_query = {"bool": {"must": query_filters}}
 
+        # Sort logic
+        if sort_by == 'date':
+            sort_criteria = [{"date_publication": {"order": "desc"}}]
+        elif sort_by == 'title':
+            sort_criteria = [{"job_title": {"order": "asc"}}]
+
         # Fetch offers from Elasticsearch using the constructed query
-        response = db.search(
-            index="offres_emploi",
-            body={
-                "from": start,
-                "size": per_page,
-                "query": final_query
-            }
-        )
+        response = db.search(index="offres_emploi", body={"from": start, "size": per_page, "query": final_query, "sort": sort_criteria})
+        total_offers_response = db.count(index="offres_emploi", body={"query": final_query})
+        total_offers = total_offers_response['count']
         responseforFilters = db.search(index="offres_emploi", body={"query": {"match_all": {}}}, size=100)
 
         companies = set()
@@ -115,20 +117,18 @@ def offer():
         total_offers = total_offers_response['count']
         total_pages = (total_offers + per_page - 1) // per_page
 
-
     except exceptions.ElasticsearchException as e:
-        list_companies =[]
+        list_companies = []
         list_locations = []
         list_employment_types = []
         offres = []
         total_pages = 0
         page = 1
-
     return render_template('offer_client_side.html', total_pages=total_pages, page=page, offres=offres,
                            list_locations=list_locations, list_companies=list_companies,
                            list_employment_types=list_employment_types, location_filter=location_filter,
                            company_filter=company_filter, employment_type_filter=employment_type_filter,
-                           date_filter=date_filter)
+                           date_filter=date_filter, offerNumber=total_offers, sort_by=sort_by)
 
 
 # *************** define the API routes ***********************

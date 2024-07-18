@@ -7,10 +7,6 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            updateOfferDetailsStyle();
-        });
-
         function applicationSuccess() {
             const form = document.getElementById('applicationForm');
             const formData = new FormData(form);
@@ -108,16 +104,20 @@
             details.style.display = 'block'; // Ensure the details are visible
 
             const offerDetailsContainer = document.getElementById('offerDetails');
-            document.getElementById('offer_id').value = details.querySelector('#id').textContent;
-            console.log(details.querySelector('#id').textContent);
-            console.log(document.getElementById('offer_id').value);
+            offerDetailsContainer.style.width = '150%';
+            offerDetailsContainer.style.backgroundColor = '#fff'; // Same background as the offer item
+            offerDetailsContainer.style.border = '2px solid black';
+            offerDetailsContainer.style.borderRadius = '10px';
+            offerDetailsContainer.style.padding = '10px';
+            offerDetailsContainer.style.marginTop = '105px';
+            offerDetailsContainer.style.marginLeft = 'auto';
+            offerDetailsContainer.style.marginRight = 'auto';
+            offerDetailsContainer.style.height = 'calc(100vh - 150px)';
 
             offerDetailsContainer.innerHTML = ''; // Clear previous details
             offerDetailsContainer.appendChild(details); // Add new details
-
             // Remove IDs to avoid duplicate IDs in the document
             details.querySelectorAll('[id]').forEach(element => element.removeAttribute('id'));
-
         }
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -149,35 +149,42 @@
         body {
             margin: 0;
             padding: 0;
-
-            background-color: #f0f0f0;
-            font-family: Arial, sans-serif;
+            font-family: "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background-color: #f8f9fa;
         }
 
         .container {
-            display: block;
-            margin-left: 490px;
-            margin-right: auto;
-            width: 100%;
+            margin: 20px auto;
+            width: 80%;
+            max-width: 1200px;
+        }
+
+        .container form {
+            display: flex;
+            align-items: center; /* Align items vertically in the center */
+            flex-wrap: wrap; /* Allow elements to wrap to next line if necessary */
 
         }
 
         .container form > div {
-            display: inline-block; /* Makes each div inline */
-            margin-right: 10px; /* Adds some space between the elements */
+            display: inline-block;
+            margin-right: 10px;
         }
 
-        .container label, .container select {
-            display: block; /* Ensures the label and select are on separate lines within their div */
-            margin-bottom: 5px; /* Adds some space below each label */
+        .container label,
+        .container select {
+            display: block;
+
         }
 
         .container button {
-            vertical-align: top; /* Aligns the button with the top of the form elements */
+            vertical-align: top;
+            margin-left: 10px; /* Adjust spacing between filters and button */
         }
 
-        #offersList, #offerDetails {
-            width: 50%;
+        #offersList,
+        #offerDetails {
+            width: 100%;
             padding: 10px;
             box-sizing: border-box;
         }
@@ -186,160 +193,207 @@
             flex: 1;
             overflow-y: auto;
             margin-bottom: 20px;
-            width: 100%;
         }
 
         #offersList div {
             cursor: pointer;
-            padding: 5px;
-            margin-bottom: 5px;
-            background-color: #f0f0f0;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #fff;
             border-radius: 10px;
-            border: 2px solid #000;
+            border: 1px solid #dee2e6;
+            transition: box-shadow 0.3s;
+        }
 
+        #offersList div:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         #offers {
             display: flex;
             height: calc(100vh - 150px);
-            margin: 20px auto; /* Center horizontally and keep the vertical margin */
-            width: 80%; /* Adjust the width as needed for centering */
+            margin: 20px auto;
+            width: 100%;
         }
 
         .containerr {
             display: flex;
+            margin-left: 50px;
             flex-direction: column;
-            width: 50%;
-            height: calc(100vh - 150px); /* Adjusted to fit the viewport */
+            width: 40%; /* Adjust width as needed */
+            height: 100%;
             margin-top: 20px;
-            justify-content: center;
+            justify-content: flex-start;
+            align-content: space-between;
         }
 
-
         form {
-            width: 100%; /* Adjust as needed */
-            margin-bottom: 20px; /* Space between form and offers list */
+            width: 100%;
+            margin-bottom: 20px;
         }
 
         .overlay-container {
-            display: none; /* Initially hidden */
-            position: fixed; /* Overlay is positioned relative to the viewport */
+            display: none;
+            position: fixed;
             top: 0;
             left: 0;
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-            z-index: 1000; /* Ensures overlay is on top of other content */
-            justify-content: center; /* Center horizontally */
-            align-items: center; /* Center vertically */
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
         }
 
         .popup-box {
-            background-color: #fff; /* White background for the popup */
-            padding: 20px; /* Padding around the content */
-            border-radius: 5px; /* Rounded corners */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Slight shadow for depth */
-            width: 50%; /* Width of the popup */
-            max-width: 500px; /* Maximum width */
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
         }
 
-        /* When .show class is added to .overlay-container */
         .overlay-container.show {
-            display: flex; /* Make the overlay visible */
+            display: flex;
         }
 
         .filter {
-            background-color: #d3d3d3; /* Button-like blue background */
-            color: black; /* White text color */
-            padding: 10px 15px; /* Padding to increase the size, similar to a button */
-            border: none; /* Remove the default border */
-            border-radius: 5px; /* Rounded corners */
-            cursor: pointer; /* Change cursor to pointer to indicate it's clickable */
-            outline: none; /* Remove the outline to mimic button style */
-            -webkit-appearance: none; /* Remove default browser styling */
-            -moz-appearance: none; /* Remove default browser styling */
-            appearance: none; /* Remove default browser styling */
-            position: relative; /* Needed for custom arrow positioning */
+            background-color: #f8f9fa;
+            color: #495057;
+            padding: 10px 15px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            cursor: pointer;
+            outline: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            position: relative;
         }
 
         .filter:focus {
-            background-color: #b3b3b3; /* Darker shade for focus state */
-            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, .25); /* Bootstrap-like focus shadow */
+            background-color: #e9ecef;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
         }
 
-        .offer-details-container {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start; /* Aligns items to the start of the container */
-        }
-
-        /* Custom arrow */
-        .filter::-ms-expand {
-            display: none; /* Hide the default arrow in IE */
-        }
-
-        .filter::after {
-            content: '\25BC'; /* Down arrow */
-            position: absolute;
-            top: 50%;
-            right: 15px;
-            transform: translateY(-50%);
-            color: #000000; /* Arrow color */
-            pointer-events: none; /* Prevent arrow from being clickable */
-        }
-
-        /* Adjust the div that wraps the select to inline-block for alignment */
         .filterDiv {
             display: inline-block;
-            margin-right: 10px; /* Space between filters */
+            margin-right: 10px;
+            margin-bottom: 5px; /* Adjust spacing between filter elements */
         }
 
         .btn-primary {
-            padding: 10px 15px; /* Match the padding of .filter */
-            font-size: 16px; /* Match the font size of .filter */
-            border: none; /* Assuming .filter has no border */
-            border-radius: 5px; /* Match the border-radius of .filter */
-            cursor: pointer; /* Ensure it's clear the button is clickable */
+            padding: 10px 15px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
         }
 
-        /* Adjustments for hover state to maintain visual feedback */
         .btn-primary:hover {
-            background-color: #218838; /* Darker shade for hover effect */
+            background-color: #218838;
             border-color: #1e7e34;
         }
 
-        .container .filterDiv, .container button {
-            margin-top: 20px; /* Adjust the value as needed */
+        .container .filterDiv,
+        .container button {
+            margin-top: 5px; /* Adjust margin between filters and other elements */
         }
 
         .scrollable-content {
-            max-height: 450px; /* Adjust based on your needs */
+            max-height: 450px;
             overflow-y: auto;
         }
 
         .scrollable-content p {
-            margin: 10px 0; /* Adds vertical spacing between paragraphs */
-            padding: 5px; /* Adds padding inside each paragraph */
+            margin: 10px 0;
+            padding: 5px;
         }
 
         .scrollable-content hr {
-            margin: 10px 0; /* Adds vertical spacing above and below each <hr> */
+            margin: 10px 0;
         }
 
-        #offerDetails {
-            width: 100%; /* Shrink the width as needed */
-            background-color: #f0f0f0;
-            border-radius: 10px;
-            margin-top: 10px; /* Adjust if needed */
-            margin-left: auto; /* Center the offer details if it's not nested inside #offers */
-            margin-right: auto;
+        h3 {
+            margin-bottom: 20px;
         }
 
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px; /* Adjust margin as needed */
+        }
+
+        .pagination .page-item.disabled .page-link {
+            color: #6c757d;
+            pointer-events: none;
+            background-color: #fff;
+            border-color: #dee2e6;
+        }
+
+        .pagination .page-item.active .page-link {
+            z-index: 3;
+            color: #fff;
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .pagination .page-link {
+            position: relative;
+            display: block;
+            padding: 0.5rem 0.75rem;
+            margin-left: -1px;
+            line-height: 1.25;
+            color: #007bff;
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+        }
+
+        .pagination .page-link:hover {
+            z-index: 2;
+            color: #0056b3;
+            text-decoration: none;
+            background-color: #e9ecef;
+            border-color: #dee2e6;
+        }
+
+        .pagination .page-link:focus {
+            z-index: 3;
+            outline: none;
+            box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+        }
+
+        .container .btn-primary,
+        .container .filter {
+            margin-top: 5px; /* Adjust margin between filters and other elements */
+        }
+
+        #header3 {
+            margin-left: 20px;
+            margin-bottom: 10px; /* Adjust margin as needed */
+        }
+
+        table {
+            margin-left: 20px;
+            width: 100%;
+            align-content: center;
+        }
+
+        table td {
+            vertical-align: middle; /* Vertical alignment */
+        }
+
+        .pagination-container {
+            margin-top: 20px; /* Adjust margin as needed */
+        }
     </style>
+
+
 </head>
 <body>
 <div class="container">
-    <form id="filterForm" method="POST" action="/offer">
+    <form id="filterForm" method="POST" action="/offer" style="display: flex; align-items: center;">
         <div class="filterDiv">
             <select id="locationFilter" class="filter" name="locationFilter">
                 <option value="">Select Location</option>
@@ -386,7 +440,20 @@
 <hr>
 <div id="offers">
     <div class="containerr">
-        <h3>list des offres : </h3>
+        <h3 id="header3">list des offres : </h3>
+        <table>
+            <tr>
+                <td>Ordered by:
+                    <a href="{{ url_for('offer', page=page, sort='date') }}">Date</a> |
+                    <a href="{{ url_for('offer', page=page, sort='title') }}">Alphabetically</a>
+                </td>
+                <td>
+                    {% if offerNumber %}number of offers : {{ offerNumber }}{% endif %}
+                </td>
+            </tr>
+        </table>
+
+
         <div id="offersList">
             {% for offer in offres %}
                 <div class="offer" onclick="showOfferDetails(this)" data-publication-date="{{ offer.date_publication }}"
@@ -460,7 +527,6 @@
     </div>
 
     <div class="offer-details-container">
-        <h3>offer details : </h3>
         <div id="offerDetails">
             <!-- Offer details will be displayed here -->
         </div>
