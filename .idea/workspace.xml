@@ -7,7 +7,6 @@
     <list default="true" id="211c28f5-c229-4a03-8c6b-981934d92be3" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/offer_client_side.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/offer_client_side.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,6 +63,12 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/static" />
+      <recent name="$PROJECT_DIR$/templates" />
+    </key>
+  </component>
   <component name="RunManager" selected="Flask server.flaskProject">
     <configuration name="flaskProject-endpoints | #1" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$APPLICATION_CONFIG_DIR$/scratches/flaskProject-endpoints.http" requestIdentifier="#1" runType="Run single request">
       <method v="2" />
@@ -143,7 +148,10 @@
       <workItem from="1721218699718" duration="3364000" />
       <workItem from="1721242358828" duration="5826000" />
       <workItem from="1721292369471" duration="6823000" />
-      <workItem from="1721307341587" duration="12894000" />
+      <workItem from="1721307341587" duration="13020000" />
+      <workItem from="1721893701441" duration="5156000" />
+      <workItem from="1721905362505" duration="5764000" />
+      <workItem from="1721985094663" duration="2369000" />
     </task>
     <servers />
   </component>

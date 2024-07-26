@@ -135,7 +135,7 @@ def offer():
                            list_locations=list_locations, list_companies=list_companies,
                            list_employment_types=list_employment_types, location_filter=location_filter,
                            company_filter=company_filter, employment_type_filter=employment_type_filter,
-                           date_filter=date_filter, offerNumber=total_offers, sort_by=sort_by,lang=lang)
+                           date_filter=date_filter, offerNumber=total_offers, sort_by=sort_by, lang=lang)
 
 
 # *************** define the API routes ***********************
