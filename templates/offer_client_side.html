@@ -7,14 +7,100 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        function applicationSuccess() {
-            const form = document.getElementById('applicationForm');
-            const formData = new FormData(form);
+    function showOfferDetails(offerElement) {
+        const details = offerElement.querySelector('.offer-details').cloneNode(true);
+        details.style.display = 'block';
 
-            fetch('/apply-for-job', {
-                method: 'POST',
-                body: formData,
-            })
+        const offerDetailsContainer = document.getElementById('offerDetails');
+        offerDetailsContainer.style.width = '150%';
+        offerDetailsContainer.style.backgroundColor = '#fff';
+        offerDetailsContainer.style.border = '2px solid black';
+        offerDetailsContainer.style.borderRadius = '10px';
+        offerDetailsContainer.style.padding = '10px';
+        offerDetailsContainer.style.marginTop = '105px';
+        offerDetailsContainer.style.marginLeft = 'auto';
+        offerDetailsContainer.style.marginRight = 'auto';
+        offerDetailsContainer.style.height = 'calc(100vh - 150px)';
+
+        offerDetailsContainer.innerHTML = '';
+        offerDetailsContainer.appendChild(details);
+        details.querySelectorAll('[id]').forEach(element => element.removeAttribute('id'));
+    }
+
+    function showPopup() {
+        const overlay = document.getElementById('popupOverlay');
+        overlay.classList.toggle('show');
+        overlay.style.display = overlay.classList.contains('show') ? 'flex' : 'none';
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const offers = document.querySelectorAll('.offer');
+        const today = new Date();
+
+        offers.forEach(offer => {
+            const publicationDate = new Date(offer.getAttribute('data-publication-date'));
+            const endDate = new Date(offer.getAttribute('data-end-date'));
+
+            if (publicationDate <= today && endDate >= today) {
+                offer.style.display = '';
+            } else {
+                offer.style.display = 'none';
+            }
+
+            // Add event listener to show offer details on click
+            offer.addEventListener('click', function () {
+                showOfferDetails(offer);
+            });
+        });
+
+        function attachCancelEvent() {
+            const cancelButton = document.querySelector('button[type="reset"].btn-secondary');
+            if (cancelButton) {
+                cancelButton.addEventListener('click', function () {
+                    const overlay = document.getElementById('popupOverlay');
+                    overlay.classList.toggle('show', false);
+                    overlay.style.display = 'none';
+
+                    const form = overlay.querySelector('form');
+                    form.reset();
+                });
+            }
+        }
+
+        const scrollableOfferDetails = document.querySelector('.scrollable-offer-details');
+        const headerContent = document.querySelector('#offerDetails h2');
+        const otherContent = document.querySelectorAll('#offerDetails p, #offerDetails button');
+
+        if (scrollableOfferDetails) {
+            scrollableOfferDetails.addEventListener('scroll', function () {
+                const shrinkRatio = 0.8;
+                const scrollTop = scrollableOfferDetails.scrollTop;
+
+                if (scrollTop > 50) {
+                    headerContent.style.transform = `scale(${shrinkRatio})`;
+                    otherContent.forEach(element => {
+                        element.style.transform = `scale(${shrinkRatio})`;
+                    });
+                } else {
+                    headerContent.style.transform = 'scale(1)';
+                    otherContent.forEach(element => {
+                        element.style.transform = 'scale(1)';
+                    });
+                }
+            });
+        }
+
+        // Attach form submit event
+        const applicationForm = document.getElementById('applicationForm');
+        if (applicationForm) {
+            applicationForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const formData = new FormData(applicationForm);
+
+                fetch('/apply-for-job', {
+                    method: 'POST',
+                    body: formData,
+                })
                 .then(response => response.text())
                 .then(data => {
                     if (data === '1') {
@@ -32,119 +118,22 @@
                             confirmButtonText: 'OK'
                         });
                     }
-                }).catch(error => console.error('Error:', error));
-
-            form.reset();
-            document.getElementById('popupOverlay').style.display = 'none';
-        }
-
-        function verif() {
-            event.preventDefault();
-            const email = document.getElementById('email').value;
-            const resume = document.getElementById('resume');
-            const file = resume.files[0];
-            const fileName = file ? file.name : '';
-            const fileExtension = fileName.slice(((fileName.lastIndexOf('.') - 1) >>> 0) + 2).toLowerCase();
-            const allowedExtensions = ['pdf', 'doc', 'docx'];
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                return;
-            }
-            if (!allowedExtensions.includes(fileExtension)) {
-
-                return;
-            }
-
-
-            document.getElementById('popupOverlay').style.display = 'none';
-            applicationSuccess();
-            document.querySelector('.form-container').reset();
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-
-
-            const offers = document.querySelectorAll('.offer');
-            const today = new Date();
-
-            offers.forEach(offer => {
-                const publicationDate = new Date(offer.getAttribute('data-publication-date'));
-                const endDate = new Date(offer.getAttribute('data-end-date'));
-
-                // Show offers only if the publication date is before today and the end date is after today
-                if (publicationDate <= today && endDate >= today) {
-                    offer.style.display = ''; // Show valid offers
-                } else {
-                    offer.style.display = 'none'; // Hide invalid offers
-                }
-            });
-        });
-
-        function showPopup() {
-            const overlay = document.getElementById('popupOverlay');
-            overlay.classList.toggle('show');
-            overlay.style.display = overlay.classList.contains('show') ? 'flex' : 'none';
-        }
-
-        function attachCancelEvent() {
-            const cancelButton = document.querySelector('button[type="reset"].btn-secondary');
-
-            cancelButton.addEventListener('click', function () {
-                const overlay = document.getElementById('popupOverlay');
-                overlay.classList.toggle('show', false);
-                overlay.style.display = 'none';
-
-                const form = overlay.querySelector('form');
-                form.reset();
-            });
-        }
-
-        function showOfferDetails(offerElement) {
-            const details = offerElement.querySelector('.offer-details').cloneNode(true);
-            details.style.display = 'block'; // Ensure the details are visible
-
-            const offerDetailsContainer = document.getElementById('offerDetails');
-            offerDetailsContainer.style.width = '150%';
-            offerDetailsContainer.style.backgroundColor = '#fff'; // Same background as the offer item
-            offerDetailsContainer.style.border = '2px solid black';
-            offerDetailsContainer.style.borderRadius = '10px';
-            offerDetailsContainer.style.padding = '10px';
-            offerDetailsContainer.style.marginTop = '105px';
-            offerDetailsContainer.style.marginLeft = 'auto';
-            offerDetailsContainer.style.marginRight = 'auto';
-            offerDetailsContainer.style.height = 'calc(100vh - 150px)';
-
-            offerDetailsContainer.innerHTML = ''; // Clear previous details
-            offerDetailsContainer.appendChild(details); // Add new details
-            // Remove IDs to avoid duplicate IDs in the document
-            details.querySelectorAll('[id]').forEach(element => element.removeAttribute('id'));
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            const scrollableOfferDetails = document.querySelector('.scrollable-offer-details');
-            const headerContent = document.querySelector('#offerDetails h2');
-            const otherContent = document.querySelectorAll('#offerDetails p, #offerDetails button');
-
-            scrollableOfferDetails.addEventListener('scroll', function () {
-                const shrinkRatio = 0.8; // Adjust as needed
-                const scrollTop = scrollableOfferDetails.scrollTop;
-
-                if (scrollTop > 50) { // Trigger point
-                    headerContent.style.transform = `scale(${shrinkRatio})`;
-                    otherContent.forEach(element => {
-                        element.style.transform = `scale(${shrinkRatio})`;
+                }).catch(error => {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'An error occurred while submitting your application.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
                     });
-                } else {
-                    headerContent.style.transform = 'scale(1)';
-                    otherContent.forEach(element => {
-                        element.style.transform = 'scale(1)';
-                    });
-                }
+                    console.error('Error:', error);
+                });
+
+                applicationForm.reset();
+                document.getElementById('popupOverlay').style.display = 'none';
             });
-        });
-
-
-    </script>
+        }
+    });
+</script>
     <style>
         body {
             margin: 0;
@@ -423,7 +412,7 @@
                 <option value="">{% if lang=='fr' %}Sélectionner le type d'emploi{% else %}Select Employment
                     Type{% endif %}</option>
                 {% for emplomentType in list_employment_types %}
-                    <option value="{{ emplomentType }}"
+                    <option value="{{emplomentType}}"
                             {% if emplomentType == employment_type_filter %}selected{% endif %}>
                         {{ emplomentType }}
                     </option>
@@ -572,7 +561,7 @@
                 <input type="text" id="last_name" name="last_name" class="form-control" required>
                 <label for="resume" class="form-label">{% if lang == 'fr' %}CV{% else %}Resume{% endif %}</label>
                 <input type="file" id="resume" name="resume" class="form-control" required><br>
-                <button type="submit" onclick="verif()" class="btn btn-primary">{% if lang == 'fr' %}Envoyer la
+                <button type="submit" class="btn btn-primary">{% if lang == 'fr' %}Envoyer la
                     candidature{% else %}Send Application{% endif %}</button>
                 <button type="reset" onclick="attachCancelEvent()" class="btn btn-secondary">{% if lang == 'fr' %}
                     Annuler{% else %}Cancel{% endif %}</button>
