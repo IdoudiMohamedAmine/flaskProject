@@ -4,7 +4,64 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="211c28f5-c229-4a03-8c6b-981934d92be3" name="Changes" comment="">
+    <list default="true" id="211c28f5-c229-4a03-8c6b-981934d92be3" name="Changes" comment="implemeted offer in the other html">
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/add-to-cart.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/animate.min.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/bootstrap.min.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/bootstrap.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/callus.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/core.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/corporate-business-handshake-partners-2048x1365.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/cresta-core.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/cropped-Sans-titre-1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/css(1)" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/css(2)" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/css(3)" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/custom-animation.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/editor-script.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/flaticon.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/fontawesome-all.min.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/frontend-lite.min.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/frontend-modules.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/frontend.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/global.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/imagesloaded.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/index(1).js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/index.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/inline-style.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/isotope.pkgd.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/jquery-migrate.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/jquery.blockUI.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/jquery.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/js.cookie.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/magnific-popup.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/magnific-popup.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/main.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/main.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/order-attribution.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/post-1880.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/post-1969.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/post-7.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/purecounter.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/sourcebuster.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/spacing.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/style.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/styles.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/swiper-bundle.min.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/swiper-bundle.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/touchspin.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/waypoints.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/wc-blocks.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/webpack.runtime.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/woocommerce(1).css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/woocommerce-layout.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/woocommerce-smallscreen.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/woocommerce.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/woocommerce.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/wow.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Consulting – WG Consulting_files/wplc-plugin-public.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
     </list>
@@ -152,11 +209,25 @@
       <workItem from="1721893701441" duration="5156000" />
       <workItem from="1721905362505" duration="5764000" />
       <workItem from="1721985094663" duration="2369000" />
+      <workItem from="1721990978053" duration="294000" />
     </task>
+    <task id="LOCAL-00001" summary="implemeted offer in the other html">
+      <option name="closed" value="true" />
+      <created>1721991274234</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1721991274234</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="implemeted offer in the other html" />
+    <option name="LAST_COMMIT_MESSAGE" value="implemeted offer in the other html" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/flaskProject$flaskProject.coverage" NAME="flaskProject Coverage Results" MODIFIED="1719927757282" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
