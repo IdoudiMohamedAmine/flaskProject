@@ -53,7 +53,7 @@ def generate_offer():
 es = Elasticsearch('http://localhost:9200')
 
 # Generate and push 50 offers
-for i in range(100):
+for i in range(30):
     offer = generate_offer()
     try:
         es.index(index='offres_emploi', id=offer['id'], body=offer)

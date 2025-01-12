@@ -2,186 +2,96 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Add Offre d'Emploi</title>
+    <title>Update Offre d'Emploi</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
 <div class="container mt-5">
-    <h1>Add Offre d'Emploi</h1>
+    <h1>Update Offre d'Emploi</h1>
     {% block body %}
-        <form id="offreForm" action="/submit-offre" method="post">
+        <form id="offreForm" action="/update/{{ offer.id }}" method="post">
             <div class="form-group">
                 <label for="employment_type">Employment Type</label>
                 <input type="text" class="form-control" id="employment_type" name="employment_type"
-                       placeholder="Employment Type">
+                       placeholder="Employment Type" value="{{ offer.employment_type }}">
             </div>
             <div class="form-group">
                 <label for="referent">Referent</label>
-                <input type="text" class="form-control" id="referent" name="referent" placeholder="Referent">
+                <input type="text" class="form-control" id="referent" name="referent" placeholder="Referent" value="{{ offer.referent }}">
             </div>
             <div class="form-group">
                 <label for="end_service">End Service</label>
-                <input type="date" class="form-control" id="end_service" name="end_service" placeholder="End Service">
+                <input type="date" class="form-control" id="end_service" name="end_service" placeholder="End Service" value="{{ offer.end_service }}">
             </div>
             <div class="form-group">
                 <label for="origin">Origin</label>
-                <input type="text" class="form-control" id="origin" name="origin" placeholder="Origin">
+                <input type="text" class="form-control" id="origin" name="origin" placeholder="Origin" value="{{ offer.origin }}">
             </div>
             <div class="form-group">
                 <label for="date_publication">Date Publication</label>
                 <input type="date" class="form-control" id="date_publication" name="date_publication"
-                       placeholder="Date Publication">
+                       placeholder="Date Publication" value="{{ offer.date_publication }}">
             </div>
             <div class="form-group">
                 <label for="skills">Skills</label>
-                <input type="text" class="form-control" id="skills" name="skills" placeholder="Skills">
+                <input type="text" class="form-control" id="skills" name="skills" placeholder="Skills" value="{{ offer.skills }}">
             </div>
             <div class="form-group">
                 <label for="start_service">Start Service</label>
                 <input type="date" class="form-control" id="start_service" name="start_service"
-                       placeholder="Start Service">
+                       placeholder="Start Service" value="{{ offer.start_service }}">
             </div>
             <div class="form-group">
                 <label for="date_fin">Date Fin</label>
-                <input type="date" class="form-control" id="date_fin" name="date_fin" placeholder="Date Fin">
+                <input type="date" class="form-control" id="date_fin" name="date_fin" placeholder="Date Fin" value="{{ offer.date_fin }}">
             </div>
             <div class="form-group">
                 <label for="job_title">Job Title</label>
-                <input type="text" class="form-control" id="job_title" name="job_title" placeholder="Job Title">
+                <input type="text" class="form-control" id="job_title" name="job_title" placeholder="Job Title" value="{{ offer.job_title }}">
             </div>
             <div class="form-group">
                 <label for="job_description">Job Description</label>
                 <input type="text" class="form-control" id="job_description" name="job_description"
-                       placeholder="Job Description">
+                       placeholder="Job Description" value="{{ offer.job_description }}">
             </div>
             <div class="form-group">
                 <label for="id">ID</label>
-                <input type="text" class="form-control" id="id" name="id" placeholder="ID">
+                <input type="text" class="form-control" id="id" name="id" placeholder="ID" value="{{ offer.id }}">
             </div>
             <div class="form-group">
                 <label for="company_name">Company Name</label>
                 <input type="text" class="form-control" id="company_name" name="company_name"
-                       placeholder="Company Name">
+                       placeholder="Company Name" value="{{ offer.company_name }}">
             </div>
             <div class="form-group">
                 <label for="industries">Industries</label>
-                <input type="text" class="form-control" id="industries" name="industries" placeholder="Industries">
+                <input type="text" class="form-control" id="industries" name="industries" placeholder="Industries" value="{{ offer.industries }}">
             </div>
             <div class="form-group">
                 <label for="location">Location</label>
-                <input type="text" class="form-control" id="location" name="location" placeholder="Location">
+                <input type="text" class="form-control" id="location" name="location" placeholder="Location" value="{{ offer.location }}">
             </div>
             <div class="form-group">
                 <label for="internal_reference">Internal Reference</label>
                 <input type="text" class="form-control" id="internal_reference" name="internal_reference"
-                       placeholder="Internal Reference">
+                       placeholder="Internal Reference" value="{{ offer.internal_reference }}">
             </div>
             <div class="form-group">
                 <label for="seniority">Seniority</label>
-                <input type="number" class="form-control" id="seniority" name="seniority" placeholder="Seniority">
+                <input type="number" class="form-control" id="seniority" name="seniority" placeholder="Seniority" value="{{ offer.seniority }}">
             </div>
             <div class="form-group">
                 <label for="experience">Experience</label>
-                <input type="number" class="form-control" id="experience" name="experience" placeholder="Experience">
+                <input type="number" class="form-control" id="experience" name="experience" placeholder="Experience" value="{{ offer.experience }}">
             </div>
             <div class="form-group">
                 <label for="status">Status</label>
-                <input type="text" class="form-control" id="status" name="status" placeholder="Status">
+                <input type="text" class="form-control" id="status" name="status" placeholder="Status" value="{{ offer.status }}">
             </div>
-            <button type="submit" class="btn btn-primary">Add</button>
+            <button type="submit" class="btn btn-primary">Update</button>
         </form>
     {% endblock %}
 </div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        document.getElementById("offreForm").addEventListener("submit", function (event) {
-            event.preventDefault(); // Prevent the form from submitting
-
-            // Validation patterns
-            const onlyLettersPattern = /^[A-Za-z\s]+$/;
-            const lettersNumbersPattern = /^[A-Za-z0-9\s]+$/;
-            const lettersNumbersSpecialCharsPattern = /^[A-Za-z0-9\s!@#\$%\^\&*\)\(+=._-]+$/;
-            const skillsPattern = /^[A-Za-z0-9\s,!@#\$%\^\&*\)\(+=._-]+$/;
-
-            // Input values
-            const employmentType = document.getElementById("employment_type").value;
-            const referent = document.getElementById("referent").value;
-            const origin = document.getElementById("origin").value;
-            const jobTitle = document.getElementById("job_title").value;
-            const location = document.getElementById("location").value;
-            const internalReference = document.getElementById("internal_reference").value;
-            const skills = document.getElementById("skills").value;
-            const endService = document.getElementById("end_service").value;
-            const dateFin = document.getElementById("date_fin").value;
-            const startService = document.getElementById("start_service").value;
-            const datePublication = document.getElementById("date_publication").value;
-
-            // Convert string dates to Date objects
-            const endServiceDate = new Date(endService);
-            const dateFinDate = new Date(dateFin);
-            const startServiceDate = new Date(startService);
-            const datePublicationDate = new Date(datePublication);
-
-            // Validation flags
-            let isValid = true;
-            let errorMessage = "";
-
-            // Validate each field
-            if (!employmentType.match(onlyLettersPattern)) {
-                isValid = false;
-                errorMessage += "Employment Type must contain only letters.\n";
-            }
-            if (!referent.match(onlyLettersPattern)) {
-                isValid = false;
-                errorMessage += "Referent must contain only letters.\n";
-            }
-            if (!origin.match(onlyLettersPattern)) {
-                isValid = false;
-                errorMessage += "Origin must contain only letters.\n";
-            }
-            if (!jobTitle.match(onlyLettersPattern)) {
-                isValid = false;
-                errorMessage += "Job Title must contain only letters.\n";
-            }
-            if (!location.match(lettersNumbersPattern)) {
-                isValid = false;
-                errorMessage += "Location must contain letters and numbers.\n";
-            }
-            if (!internalReference.match(lettersNumbersSpecialCharsPattern)) {
-                isValid = false;
-                errorMessage += "Internal Reference can contain letters, numbers, spaces, and special characters.\n";
-            }
-            if (!skills.match(skillsPattern)){
-                isValid = false;
-                errorMessage += "Skills can only contain letters, numbers, spaces, and special characters, and commas.\n";
-            }
-            // Validate end_service as a valid date
-            if (isNaN(endServiceDate.getTime())) {
-                isValid = false;
-                errorMessage += "End Service must be a valid date.\n";
-            }
-
-            // Validate start_service and date_fin are after date_publication
-            if (startServiceDate <= datePublicationDate) {
-                isValid = false;
-                errorMessage += "Start Service must be after Date Publication.\n";
-            }
-            if (dateFinDate <= datePublicationDate) {
-                isValid = false;
-                errorMessage += "Date Fin must be after Date Publication.\n";
-            }
-
-            // Show error message or submit the form
-            if (!isValid) {
-                alert(errorMessage);
-            } else {
-                this.submit(); // Form is valid, submit it
-            }
-        });
-    });
-</script>
-
 </body>
 </html>

@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, jsonify, redirect, current_app, Response
 from elasticsearch import Elasticsearch, exceptions
 from werkzeug.utils import secure_filename
-from datetime import datetime
 import os
 import base64
 
@@ -26,16 +25,63 @@ def allowed_file(filename):
 def index():
     try:
         index_exists = db.indices.exists(index="offres_emploi")
+        postuler_index_exists = db.indices.exists(index="postuler")
         if (index_exists == True):
-            response = db.search(index="offres_emploi", body={"query": {"match_all": {}}}, size=100)
+            response = db.search(index="offres_emploi", body={"size":10000, "query": {"match_all": {}}})
             offres = [hit['_source'] for hit in response['hits']['hits']]
         else:
             offres = []
     except exceptions.ElasticsearchException as e:
         offres = []
     n = len(offres)
-    return render_template('index.html', offres=offres, n=n, index_exists=index_exists)
+    return render_template('index.html', offres=offres, n=n, index_exists=index_exists, postuler_index_exists=postuler_index_exists)
+@app.route('/offer/<offer_id>')
+def offer_detail(offer_id):
+    # Fetch the offer details from the database
+    request = db.search(index="offres_emploi", body={"query": {"match": {"id": offer_id}}})
+    offer = request['hits']['hits'][0]['_source']
+    return render_template('details.html', offer=offer)
+@app.route('/update/<offer_id>', methods=['GET', 'POST'])
+def update_offer(offer_id):
+    if request.method == 'POST':
+        # Handle form submission for updating the offer
+        offer_data = {
+            "employment_type": request.form.get('employment_type'),
+            "referent": request.form.get('referent'),
+            "end_service": request.form.get('end_service'),
+            "origin": request.form.get('origin'),
+            "date_publication": request.form.get('date_publication'),
+            "skills": request.form.get('skills'),
+            "start_service": request.form.get('start_service'),
+            "date_fin": request.form.get('date_fin'),
+            "job_title": request.form.get('job_title'),
+            "job_description": request.form.get('job_description'),
+            "id": request.form.get('id'),
+            "company_name": request.form.get('company_name'),
+            "industries": request.form.get('industries'),
+            "location": request.form.get('location'),
+            "internal_reference": request.form.get('internal_reference'),
+            "seniority": request.form.get('seniority'),
+            "experience": request.form.get('experience'),
+            "status": request.form.get('status')
+        }
+        try:
+            db.update(index="offres_emploi", id=offer_id, body={"doc": offer_data})
+            return redirect('/')
+        except exceptions.ElasticsearchException as e:
+            return jsonify({"error": f"Error updating offre d'emploi: {e}"}), 500
+    else:
+        # Fetch the offer details to pre-fill the form
+        offer = db.get(index="offres_emploi", id=offer_id)['_source']
+        return render_template('offre_emploi_form.html', offer=offer)
 
+@app.route('/delete/<offer_id>', methods=['GET', 'POST'])
+def delete_offer(offer_id):
+    try:
+        db.delete(index="offres_emploi", id=offer_id)
+        return redirect('/')
+    except exceptions.ElasticsearchException as e:
+        return jsonify({"error": f"Error deleting offre d'emploi: {e}"}), 500
 
 @app.route('/add-offre')
 def add_offre():
@@ -62,8 +108,7 @@ def offer():
         date_filter = request.form.get('dateFilter')
         sort_by = request.args.get('sort_by', 'date')  # Default sort by date
 
-        print(
-            f"Filters - Location: {location_filter}, Company: {company_filter}, Employment Type: {employment_type_filter}, Date: {date_filter}, Sort By: {sort_by}")
+        print(f"Filters - Location: {location_filter}, Company: {company_filter}, Employment Type: {employment_type_filter}, Date: {date_filter}, Sort By: {sort_by}")
 
         # Construct a dynamic query based on filters
         query_filters = [{"range": {"date_publication": {"lte": "now"}}},  # Publication date is today or before
@@ -248,7 +293,7 @@ def submit_offre():
 
 @app.route('/delete-index', methods=['GET', 'POST'])
 def delete_index():
-    index_name = "postuler"
+    index_name = "offres_emploi"
     try:
         if db.indices.exists(index=index_name):
             db.indices.delete(index=index_name)

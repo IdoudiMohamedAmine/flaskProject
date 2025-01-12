@@ -6,6 +6,45 @@
     <!-- Include Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
+    <style>
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .table th, .table td {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: clip;
+            width: 100px;
+            height: 10px;
+        }
+
+        .table {
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        .table th, .table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .container-fluid {
+            width: 100%;
+            padding: 0 15px;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .clickable-row {
+            cursor: pointer;
+        }
+    </style>
+
     {% block head %}
 
     {% endblock %}
@@ -13,37 +52,38 @@
 <body>
 {% block body %}
     {{ n }}
-    <div class="container mt-5">
-        <h1 class="mb-4">Index</h1>
+    <div class="container-fluid mt-5">
+        <h1 class="mb-4">the offers</h1>
         <p>Create offre emploi</p>
         {% if offres %}
             <div class="table-responsive">
                 <table class="table table-success table-striped">
                     <thead class="thead-dark">
                     <tr>
-                        <th>Employment Type</th>
-                        <th>Referent</th>
-                        <th>End Service</th>
-                        <th>Origin</th>
-                        <th>Date Publication</th>
+                        <th>Emp. Type</th>
+                        <th>Ref.</th>
+                        <th>End Svc.</th>
+                        <th>Orig.</th>
+                        <th>Pub. Date</th>
                         <th>Skills</th>
-                        <th>Start Service</th>
-                        <th>Date Fin</th>
-                        <th>Job Title</th>
-                        <th>Job Description</th>
+                        <th>Start Svc.</th>
+                        <th>End Date</th>
+                        <th>Title</th>
+                        <th>Desc.</th>
                         <th>ID</th>
-                        <th>Company Name</th>
-                        <th>Industries</th>
-                        <th>Location</th>
-                        <th>Internal Reference</th>
-                        <th>Seniority</th>
-                        <th>Experience</th>
+                        <th>Company</th>
+                        <th>Ind.</th>
+                        <th>Loc.</th>
+                        <th>Int. Ref.</th>
+                        <th>Sen.</th>
+                        <th>Exp.</th>
                         <th>Status</th>
+                        <th>Actions</th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for offre in offres %}
-                        <tr>
+                        <tr class="clickable-row" onclick="window.location.href='/offer/{{ offre.id }}'">
                             <td>{{ offre.employment_type }}</td>
                             <td>{{ offre.referent }}</td>
                             <td>{{ offre.end_service }}</td>
@@ -62,6 +102,11 @@
                             <td>{{ offre.seniority }}</td>
                             <td>{{ offre.experience }}</td>
                             <td>{{ offre.status }}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="/update/{{ offre.id }}" class="btn btn-warning btn-sm">Update</a>
+                                    <a href="javascript:void(0);" onclick="deleteOffer(event, '{{ offre.id }}', this)" class="btn btn-danger btn-sm">Delete</a>                                </div>
+                            </td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -75,13 +120,40 @@
                 <input type="submit" value="Create index offre emploi" class="btn btn-primary">
             </form>
         {% endif %}
-        <form action="/create_postuler" method="post" class="mt-4">
-            <input type="submit" value="Create index postuler" class="btn btn-primary">
-        </form>
+        {% if not postuler_index_exists %}
+            <form action="/create_postuler" method="post" class="mt-4">
+                <input type="submit" value="Create index postuler" class="btn btn-primary">
+            </form>
+        {% endif %}
         <a href="/add-offre" class="btn btn-secondary">Add Offre d'Emploi</a>
-<a href="/delete-index" class="btn btn-danger">Delete Index</a>
-
+        <a href="/delete-index" class="btn btn-danger">Delete Index</a>
     </div>
 {% endblock %}
+<script>
+function deleteOffer(event, offerId, element) {
+    event.stopPropagation(); // Stop the event from propagating to the row click event
+    if (confirm("Are you sure you want to delete this offer?")) {
+        fetch(`/delete/${offerId}`, {
+            method: 'POST'
+        })
+        .then(response => {
+            if (response.ok) {
+                // Use the 'element' parameter to find the closest row and remove it
+                const row = element.closest('tr');
+                if (row) {
+                    row.parentNode.removeChild(row);
+                }
+            } else {
+                alert("Error deleting offer.");
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("Error deleting offer.");
+        });
+    }
+}
+
+</script>
 </body>
 </html>

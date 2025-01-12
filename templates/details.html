@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offer Details</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+        .offer-details-container {
+            width: 100%;
+            background-color: #fff;
+            border: 2px solid black;
+            border-radius: 10px;
+            padding: 10px;
+            margin-left: auto;
+            margin-right: auto;
+            height: calc(100vh - 150px);
+            overflow-y: auto;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="offer-details-container" id="offerDetails">
+        <h2>{{ offer.job_title }}</h2>
+        <p><strong>Company:</strong> {{ offer.company_name }}</p>
+        <p><strong>Employment Type:</strong> {{ offer.employment_type }}</p>
+        <p><strong>Published:</strong> {{ offer.date_publication }}</p>
+        <p><strong>Description:</strong> {{ offer.job_description }}</p>
+        <p><strong>Start Service:</strong> {{ offer.start_service }}</p>
+        <p><strong>Location:</strong> {{ offer.location }}</p>
+        <p><strong>Referent:</strong> {{ offer.referent }}</p>
+        <p><strong>Skills:</strong> {{ offer.skills }}</p>
+        <p><strong>Industries:</strong> {{ offer.industries }}</p>
+        <p><strong>Seniority:</strong> {{ offer.seniority }}</p>
+        <p><strong>Experience:</strong> {{ offer.experience }}</p>
+        <div class="action-buttons">
+            <a href="/update/{{ offer.id }}" class="btn btn-warning">Update</a>
+            <a href="/delete/{{ offer.id }}" class="btn btn-danger">Delete</a>
+        </div>
+    </div>
+</body>
+</html>
