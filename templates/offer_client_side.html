@@ -33,6 +33,20 @@
         overlay.style.display = overlay.classList.contains('show') ? 'flex' : 'none';
     }
 
+    function attachCancelEvent() {
+        const cancelButton = document.querySelector('button[type="reset"].btn-secondary');
+        if (cancelButton) {
+            cancelButton.addEventListener('click', function () {
+                const overlay = document.getElementById('popupOverlay');
+                overlay.classList.remove('show'); // Remove the 'show' class
+                overlay.style.display = 'none'; // Hide the overlay
+
+                const form = overlay.querySelector('form');
+                form.reset(); // Reset the form
+            });
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         const offers = document.querySelectorAll('.offer');
         const today = new Date();
@@ -53,19 +67,8 @@
             });
         });
 
-        function attachCancelEvent() {
-            const cancelButton = document.querySelector('button[type="reset"].btn-secondary');
-            if (cancelButton) {
-                cancelButton.addEventListener('click', function () {
-                    const overlay = document.getElementById('popupOverlay');
-                    overlay.classList.toggle('show', false);
-                    overlay.style.display = 'none';
-
-                    const form = overlay.querySelector('form');
-                    form.reset();
-                });
-            }
-        }
+        // Attach the cancel event listener when the DOM is loaded
+        attachCancelEvent();
 
         const scrollableOfferDetails = document.querySelector('.scrollable-offer-details');
         const headerContent = document.querySelector('#offerDetails h2');
@@ -93,7 +96,7 @@
         // Attach form submit event
         const applicationForm = document.getElementById('applicationForm');
         if (applicationForm) {
-            applicationForm.addEventListener('submit', function(event) {
+            applicationForm.addEventListener('submit', function (event) {
                 event.preventDefault();
                 const formData = new FormData(applicationForm);
 
@@ -101,24 +104,24 @@
                     method: 'POST',
                     body: formData,
                 })
-                .then(response => response.text())
-                .then(data => {
-                    if (data === '1') {
-                        Swal.fire({
-                            title: 'Success!',
-                            text: 'Your application has been submitted successfully.',
-                            icon: 'success',
-                            confirmButtonText: 'OK'
-                        });
-                    } else {
-                        Swal.fire({
-                            title: 'Error!',
-                            text: 'An error occurred while submitting your application.',
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        });
-                    }
-                }).catch(error => {
+                    .then(response => response.text())
+                    .then(data => {
+                        if (data === '1') {
+                            Swal.fire({
+                                title: 'Success!',
+                                text: 'Your application has been submitted successfully.',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'An error occurred while submitting your application.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    }).catch(error => {
                     Swal.fire({
                         title: 'Error!',
                         text: 'An error occurred while submitting your application.',
@@ -382,7 +385,7 @@
 </head>
 <body>
 <div class="container">
-    <form id="filterForm" method="POST" action="/offer" style="display: flex; align-items: center;">
+    <form id="filterForm" method="GET" action="/offer" style="display: flex; align-items: center;">
         <div class="filterDiv">
             <select id="locationFilter" class="filter" name="locationFilter">
                 <option value="">{% if lang == 'fr' %}Sélectionnez l'emplacement{% else %}Select
@@ -411,10 +414,10 @@
             <select id="employmentTypeFilter" class="filter" name="employmentTypeFilter">
                 <option value="">{% if lang=='fr' %}Sélectionner le type d'emploi{% else %}Select Employment
                     Type{% endif %}</option>
-                {% for emplomentType in list_employment_types %}
-                    <option value="{{emplomentType}}"
-                            {% if emplomentType == employment_type_filter %}selected{% endif %}>
-                        {{ emplomentType }}
+                {% for employmentType in list_employment_types %}
+                    <option value="{{ employmentType }}"
+                            {% if employmentType == employment_type_filter %}selected{% endif %}>
+                        {{ employmentType }}
                     </option>
                 {% endfor %}
             </select>
@@ -516,21 +519,30 @@
                 </div>
             {% endfor %}
         </div>
+        {% set query_params = {
+    'locationFilter': location_filter,
+    'companyFilter': company_filter,
+    'employmentTypeFilter': employment_type_filter,
+    'dateFilter': date_filter,
+    'sort_by': sort_by,
+    'lang': lang} %}
         <div class="pagination-container">
             <nav aria-label="Page navigation">
                 <ul class="pagination">
                     <li class="page-item {% if page == 1 %}disabled{% endif %}">
-                        <a class="page-link" href="{{ url_for('offer', page=page-1) }}" aria-label="Previous">
+                        <a class="page-link" href="{{ url_for('offer', page=page-1, **query_params) }}"
+                           aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                         </a>
                     </li>
                     {% for p in range(1, total_pages + 1) %}
                         <li class="page-item {% if p == page %}active{% endif %}">
-                            <a class="page-link" href="{{ url_for('offer', page=p) }}">{{ p }}</a>
+                            <a class="page-link" href="{{ url_for('offer', page=p, **query_params) }}">{{ p }}</a>
                         </li>
                     {% endfor %}
                     <li class="page-item {% if page == total_pages %}disabled{% endif %}">
-                        <a class="page-link" href="{{ url_for('offer', page=page+1) }}" aria-label="Next">
+                        <a class="page-link" href="{{ url_for('offer', page=page + 1, **query_params) }}"
+                           aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                         </a>
                     </li>

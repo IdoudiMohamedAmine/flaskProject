@@ -101,14 +101,15 @@ def offer():
         per_page = 10
         start = (page - 1) * per_page
 
-        # Adjusted to retrieve data from form data in POST request
-        location_filter = request.form.get('locationFilter')
-        company_filter = request.form.get('companyFilter')
-        employment_type_filter = request.form.get('employmentTypeFilter')
-        date_filter = request.form.get('dateFilter')
+        # Retrieve filter values from query parameters
+        location_filter = request.args.get('locationFilter')
+        company_filter = request.args.get('companyFilter')
+        employment_type_filter = request.args.get('employmentTypeFilter')
+        date_filter = request.args.get('dateFilter')
         sort_by = request.args.get('sort_by', 'date')  # Default sort by date
 
-        print(f"Filters - Location: {location_filter}, Company: {company_filter}, Employment Type: {employment_type_filter}, Date: {date_filter}, Sort By: {sort_by}")
+        print(
+            f"Filters - Location: {location_filter}, Company: {company_filter}, Employment Type: {employment_type_filter}, Date: {date_filter}, Sort By: {sort_by}")
 
         # Construct a dynamic query based on filters
         query_filters = [{"range": {"date_publication": {"lte": "now"}}},  # Publication date is today or before
@@ -119,7 +120,7 @@ def offer():
         if company_filter:
             query_filters.append({"match": {"company_name": company_filter}})
         if employment_type_filter:
-            query_filters.append({"match": {"employment_type": employment_type_filter}})
+            query_filters.append({"term": {"employment_type.keyword": employment_type_filter}})
 
         # Date filter logic
         if date_filter == "last_week":
@@ -181,8 +182,6 @@ def offer():
                            list_employment_types=list_employment_types, location_filter=location_filter,
                            company_filter=company_filter, employment_type_filter=employment_type_filter,
                            date_filter=date_filter, offerNumber=total_offers, sort_by=sort_by, lang=lang)
-
-
 # *************** define the API routes ***********************
 @app.route('/create-index', methods=['POST'])
 def create_index_offres_emploi():
