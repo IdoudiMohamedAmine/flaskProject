@@ -9,19 +9,24 @@
     <style>
         .table-responsive {
             overflow-x: auto;
+            max-width: 90%;
+            margin: 10px auto; /* Center the table */
         }
 
         .table th, .table td {
             white-space: nowrap;
             overflow: hidden;
-            text-overflow: clip;
-            width: 100px;
-            height: 10px;
+            text-overflow: ellipsis;
+            width: 80px; /* Reduced from 100px */
+            height: 8px; /* Reduced from 10px */
+            padding: 0.3rem; /* Smaller padding */
+            font-size: 0.85rem; /* Smaller font size */
         }
 
         .table {
-            width: 100%;
+            width: 95%; /* Reduced from 100% */
             table-layout: fixed;
+            margin: 0 auto;
         }
 
         .table th, .table td {
@@ -30,19 +35,26 @@
         }
 
         .container-fluid {
-            width: 100%;
-            padding: 0 15px;
+            width: 95%; /* Reduced container width */
+            padding: 0 10px;
         }
 
         .action-buttons {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 3px; /* Reduced from 5px */
         }
 
         .clickable-row {
             cursor: pointer;
         }
+
+        /* Additional styles for smaller buttons */
+        .btn-sm {
+            padding: 0.2rem 0.4rem;
+            font-size: 0.75rem;
+        }
+
     </style>
 
     {% block head %}
@@ -51,10 +63,11 @@
 </head>
 <body>
 {% block body %}
-    {{ n }}
     <div class="container-fluid mt-5">
         <h1 class="mb-4">the offers</h1>
         <p>Create offre emploi</p>
+    <a href="/add-offre" class="btn btn-secondary">Add Offre d'Emploi</a>
+        <!-- <a href="/delete-index" class="btn btn-danger">Delete Index</a> -->
         {% if offres %}
             <div class="table-responsive">
                 <table class="table table-success table-striped">
@@ -126,8 +139,7 @@
                 <input type="submit" value="Create index postuler" class="btn btn-primary">
             </form>
         {% endif %}
-        <a href="/add-offre" class="btn btn-secondary">Add Offre d'Emploi</a>
-        <!-- <a href="/delete-index" class="btn btn-danger">Delete Index</a> -->
+
     </div>
 {% endblock %}
 <script>

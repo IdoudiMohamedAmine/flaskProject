@@ -73,7 +73,7 @@ def update_offer(offer_id):
     else:
         # Fetch the offer details to pre-fill the form
         offer = db.get(index="offres_emploi", id=offer_id)['_source']
-        return render_template('offre_emploi_form.html', offer=offer)
+        return render_template('update_offer.html', offer=offer)
 
 @app.route('/delete/<offer_id>', methods=['GET', 'POST'])
 def delete_offer(offer_id):
@@ -260,8 +260,20 @@ def create_postuler():
 
 @app.route('/submit-offre', methods=['POST'])
 def submit_offre():
-    if (not db.indices.exists(index="offres_emploi")):
+    if not db.indices.exists(index="offres_emploi"):
         return jsonify({"error": "Index 'offres_emploi' does not exist. Please create it first."}), 500
+
+    # Generate a unique ID for the offer
+    import uuid
+    import datetime
+
+    # Create a timestamp-based prefix for better readability
+    timestamp = datetime.datetime.now().strftime("%Y%m%d")
+    # Generate a unique identifier and take first 8 chars
+    unique_part = str(uuid.uuid4())[:8]
+    # Combine for a readable but unique ID
+    offer_id = f"OFFER-{timestamp}-{unique_part}"
+
     # Extracting form data
     offre_data = {
         "employment_type": request.form.get('employment_type'),
@@ -274,7 +286,7 @@ def submit_offre():
         "date_fin": request.form.get('date_fin'),
         "job_title": request.form.get('job_title'),
         "job_description": request.form.get('job_description'),
-        "id": request.form.get('id'),
+        "id": offer_id,  # Auto-generated ID
         "company_name": request.form.get('company_name'),
         "industries": request.form.get('industries'),
         "location": request.form.get('location'),
@@ -283,8 +295,10 @@ def submit_offre():
         "experience": request.form.get('experience'),
         "status": request.form.get('status')
     }
+
     try:
-        db.index(index="offres_emploi", document=offre_data)
+        # Use the generated ID for both document ID and internal ID field
+        result = db.index(index="offres_emploi", id=offer_id, document=offre_data)
         return redirect('/')
     except exceptions.ElasticsearchException as e:
         return jsonify({"error": f"Error adding offre d'emploi: {e}"}), 500

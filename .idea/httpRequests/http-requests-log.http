@@ -1,3 +1,12 @@
+GET http://localhost:5000/delete-index
+User-Agent: IntelliJ HTTP Client/PyCharm 2025.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+<> 2025-05-01T220149.200.html
+
+###
+
 POST http://localhost:5000/delete-index
 User-Agent: IntelliJ HTTP Client/PyCharm 2024.1.4
 Accept-Encoding: br, deflate, gzip, x-gzip

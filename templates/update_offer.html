@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Create Offre d'Emploi</title>
+    <title>Update Offre d'Emploi</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
 <div class="container-fluid mt-4">
-    <h2 class="mb-3">Create Offre d'Emploi</h2>
+    <h2 class="mb-3">Update Offre d'Emploi</h2>
 
-    <form id="offreForm" action="/submit-offre" method="post">
+    <form id="offreForm" action="/update/{{ offer.id }}" method="post">
         <div class="row">
             <!-- Left column -->
             <div class="col-md-4">
@@ -17,28 +17,35 @@
                     <div class="card-header bg-primary text-white">Basic Info</div>
                     <div class="card-body">
                         <div class="form-group">
+                            <label for="id">ID</label>
+                            <input type="text" class="form-control form-control-sm" id="id" name="id"
+                                   value="{{ offer.id }}" readonly>
+                            <small class="form-text text-muted">ID cannot be changed</small>
+                        </div>
+                        <div class="form-group">
                             <label for="job_title">Job Title</label>
-                            <input type="text" class="form-control form-control-sm" id="job_title" name="job_title" placeholder="Job Title">
+                            <input type="text" class="form-control form-control-sm" id="job_title" name="job_title"
+                                   placeholder="Job Title" value="{{ offer.job_title }}">
                         </div>
                         <div class="form-group">
                             <label for="company_name">Company Name</label>
-                            <input type="text" class="form-control form-control-sm" id="company_name" name="company_name" placeholder="Company Name">
+                            <input type="text" class="form-control form-control-sm" id="company_name" name="company_name"
+                                   placeholder="Company Name" value="{{ offer.company_name }}">
                         </div>
                         <div class="form-group">
                             <label for="location">Location</label>
-                            <input type="text" class="form-control form-control-sm" id="location" name="location" placeholder="Location">
+                            <input type="text" class="form-control form-control-sm" id="location" name="location"
+                                   placeholder="Location" value="{{ offer.location }}">
                         </div>
                         <div class="form-group">
                             <label for="job_description">Job Description</label>
-                            <textarea class="form-control form-control-sm" id="job_description" name="job_description" placeholder="Job Description" rows="2"></textarea>
+                            <textarea class="form-control form-control-sm" id="job_description" name="job_description"
+                                   placeholder="Job Description" rows="2">{{ offer.job_description }}</textarea>
                         </div>
                         <div class="form-group">
                             <label for="skills">Skills</label>
-                            <input type="text" class="form-control form-control-sm" id="skills" name="skills" placeholder="Skills">
-                        </div>
-                        <div class="form-group">
-                            <label for="industries">Industries</label>
-                            <input type="text" class="form-control form-control-sm" id="industries" name="industries" placeholder="Industries">
+                            <input type="text" class="form-control form-control-sm" id="skills" name="skills"
+                                   placeholder="Skills" value="{{ offer.skills }}">
                         </div>
                     </div>
                 </div>
@@ -53,13 +60,15 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="date_publication">Publication Date</label>
-                                    <input type="date" class="form-control form-control-sm" id="date_publication" name="date_publication">
+                                    <input type="date" class="form-control form-control-sm" id="date_publication" name="date_publication"
+                                           value="{{ offer.date_publication }}">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="date_fin">End Date</label>
-                                    <input type="date" class="form-control form-control-sm" id="date_fin" name="date_fin">
+                                    <input type="date" class="form-control form-control-sm" id="date_fin" name="date_fin"
+                                           value="{{ offer.date_fin }}">
                                 </div>
                             </div>
                         </div>
@@ -67,13 +76,15 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="start_service">Start Service</label>
-                                    <input type="date" class="form-control form-control-sm" id="start_service" name="start_service">
+                                    <input type="date" class="form-control form-control-sm" id="start_service" name="start_service"
+                                           value="{{ offer.start_service }}">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="end_service">End Service</label>
-                                    <input type="date" class="form-control form-control-sm" id="end_service" name="end_service">
+                                    <input type="date" class="form-control form-control-sm" id="end_service" name="end_service"
+                                           value="{{ offer.end_service }}">
                                 </div>
                             </div>
                         </div>
@@ -81,13 +92,15 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="employment_type">Employment Type</label>
-                                    <input type="text" class="form-control form-control-sm" id="employment_type" name="employment_type" placeholder="Employment Type">
+                                    <input type="text" class="form-control form-control-sm" id="employment_type" name="employment_type"
+                                           placeholder="Employment Type" value="{{ offer.employment_type }}">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="status">Status</label>
-                                    <input type="text" class="form-control form-control-sm" id="status" name="status" placeholder="Status">
+                                    <label for="industries">Industries</label>
+                                    <input type="text" class="form-control form-control-sm" id="industries" name="industries"
+                                           placeholder="Industries" value="{{ offer.industries }}">
                                 </div>
                             </div>
                         </div>
@@ -95,13 +108,15 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="seniority">Seniority</label>
-                                    <input type="number" class="form-control form-control-sm" id="seniority" name="seniority" placeholder="Seniority">
+                                    <input type="number" class="form-control form-control-sm" id="seniority" name="seniority"
+                                           placeholder="Seniority" value="{{ offer.seniority }}">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="experience">Experience</label>
-                                    <input type="number" class="form-control form-control-sm" id="experience" name="experience" placeholder="Experience">
+                                    <input type="number" class="form-control form-control-sm" id="experience" name="experience"
+                                           placeholder="Experience" value="{{ offer.experience }}">
                                 </div>
                             </div>
                         </div>
@@ -116,19 +131,26 @@
                     <div class="card-body">
                         <div class="form-group">
                             <label for="referent">Referent</label>
-                            <input type="text" class="form-control form-control-sm" id="referent" name="referent" placeholder="Referent">
+                            <input type="text" class="form-control form-control-sm" id="referent" name="referent"
+                                   placeholder="Referent" value="{{ offer.referent }}">
                         </div>
                         <div class="form-group">
                             <label for="origin">Origin</label>
-                            <input type="text" class="form-control form-control-sm" id="origin" name="origin" placeholder="Origin">
+                            <input type="text" class="form-control form-control-sm" id="origin" name="origin"
+                                   placeholder="Origin" value="{{ offer.origin }}">
                         </div>
                         <div class="form-group">
                             <label for="internal_reference">Internal Reference</label>
-                            <input type="text" class="form-control form-control-sm" id="internal_reference" name="internal_reference" placeholder="Internal Reference">
+                            <input type="text" class="form-control form-control-sm" id="internal_reference" name="internal_reference"
+                                   placeholder="Internal Reference" value="{{ offer.internal_reference }}">
                         </div>
-
+                        <div class="form-group">
+                            <label for="status">Status</label>
+                            <input type="text" class="form-control form-control-sm" id="status" name="status"
+                                   placeholder="Status" value="{{ offer.status }}">
+                        </div>
                         <div class="mt-4 text-center">
-                            <button type="submit" class="btn btn-primary btn-block">Create Offer</button>
+                            <button type="submit" class="btn btn-primary btn-block">Update Offer</button>
                         </div>
                     </div>
                 </div>
